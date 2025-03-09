@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
@@ -8,9 +7,11 @@ import AnimatedTransition from '@/components/AnimatedTransition';
 import ChatInterface from '@/components/ChatInterface';
 import CourseExplorer from '@/components/CourseExplorer';
 import { ChatProvider, useChat } from '@/contexts/ChatContext';
+import CoursesModal from '@/components/CoursesModal';
 
 const HeroSection = () => {
   const { sendMessage } = useChat();
+  const [isCoursesModalOpen, setIsCoursesModalOpen] = useState(false);
   
   return (
     <section className="relative min-h-screen flex items-center px-4 overflow-hidden">
@@ -48,7 +49,12 @@ const HeroSection = () => {
           </div>
           
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-            <Stat icon={<BookOpen className="h-5 w-5 text-primary" />} value="300+" label="Courses" />
+            <Stat 
+              icon={<BookOpen className="h-5 w-5 text-primary" />} 
+              value="300+" 
+              label="Courses" 
+              onClick={() => setIsCoursesModalOpen(true)}
+            />
             <Stat icon={<Building className="h-5 w-5 text-primary" />} value="1000+" label="Colleges" />
             <Stat icon={<BriefcaseIcon className="h-5 w-5 text-primary" />} value="500+" label="Careers" />
             <Stat icon={<GraduationCap className="h-5 w-5 text-primary" />} value="24/7" label="Assistance" />
@@ -77,6 +83,11 @@ const HeroSection = () => {
           <ChevronDown className="h-5 w-5" />
         </Button>
       </div>
+      
+      <CoursesModal 
+        isOpen={isCoursesModalOpen} 
+        onClose={() => setIsCoursesModalOpen(false)} 
+      />
     </section>
   );
 };
@@ -312,10 +323,15 @@ interface StatProps {
   icon: React.ReactNode;
   value: string;
   label: string;
+  onClick?: () => void;
 }
 
-const Stat: React.FC<StatProps> = ({ icon, value, label }) => (
-  <div className="flex flex-col items-center bg-white p-3 rounded-lg shadow-sm border border-border/50">
+const Stat: React.FC<StatProps> = ({ icon, value, label, onClick }) => (
+  <div 
+    className={`flex flex-col items-center bg-white p-3 rounded-lg shadow-sm border border-border/50 ${onClick ? 'cursor-pointer hover:bg-accent/30 hover:shadow-md transition-all' : ''}`}
+    onClick={onClick}
+    role={onClick ? "button" : undefined}
+  >
     <div className="mb-2">{icon}</div>
     <div className="text-xl font-bold">{value}</div>
     <div className="text-xs text-muted-foreground">{label}</div>
