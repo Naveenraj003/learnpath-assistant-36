@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -68,7 +67,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ className }) => {
       <div className="flex items-center justify-between p-4 border-b">
         <div className="flex items-center gap-2">
           <div className="w-3 h-3 rounded-full bg-primary animate-pulse-subtle" />
-          <h3 className="font-medium">AI Career Assistant</h3>
+          <h3 className="font-medium">AI Career Assistant for Indian Students</h3>
         </div>
         <Button 
           variant="ghost" 
@@ -118,7 +117,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ className }) => {
         <div className="relative">
           <Textarea
             ref={messageInputRef}
-            placeholder="Ask about courses, colleges, or career opportunities..."
+            placeholder="Ask about courses, colleges, or career opportunities in India..."
             value={messageInput}
             onChange={(e) => setMessageInput(e.target.value)}
             onKeyDown={handleKeyDown}
@@ -137,23 +136,23 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ className }) => {
         <div className="mt-2 flex justify-start gap-2">
           <AnimatedTransition>
             <SuggestionChip 
-              onClick={() => sendMessage("What are the best engineering courses?")}
+              onClick={() => sendMessage("What are the best engineering colleges in India?")}
             >
-              Best engineering courses
+              Top IITs & NITs
             </SuggestionChip>
           </AnimatedTransition>
           <AnimatedTransition showDelay={100}>
             <SuggestionChip 
-              onClick={() => sendMessage("Top colleges for computer science")}
+              onClick={() => sendMessage("Career options after B.Tech in India")}
             >
-              Top CS colleges
+              B.Tech careers
             </SuggestionChip>
           </AnimatedTransition>
           <AnimatedTransition showDelay={200}>
             <SuggestionChip 
-              onClick={() => sendMessage("Career options after medicine")}
+              onClick={() => sendMessage("MBBS colleges in India")}
             >
-              Medical careers
+              MBBS options
             </SuggestionChip>
           </AnimatedTransition>
         </div>

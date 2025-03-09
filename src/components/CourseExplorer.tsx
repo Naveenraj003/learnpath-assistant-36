@@ -47,7 +47,7 @@ const CourseExplorer: React.FC<CourseExplorerProps> = ({ onAskAboutCourse }) => 
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
           <Input
             type="text"
-            placeholder="Search courses, colleges, or careers..."
+            placeholder="Search courses, colleges, or careers in India..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="pl-10 pr-4 py-6 w-full glass-input"
@@ -139,7 +139,7 @@ const CourseExplorer: React.FC<CourseExplorerProps> = ({ onAskAboutCourse }) => 
                         <div className="text-sm">{course.duration}</div>
                       </div>
                       <div>
-                        <div className="text-sm font-medium mb-2">Career Prospects</div>
+                        <div className="text-sm font-medium mb-2">Career Prospects in India</div>
                         <div className="flex flex-wrap gap-2">
                           {course.careerProspects.slice(0, 3).map((career, idx) => (
                             <Badge key={idx} variant="secondary" className="bg-accent">
@@ -156,7 +156,7 @@ const CourseExplorer: React.FC<CourseExplorerProps> = ({ onAskAboutCourse }) => 
                       <Button 
                         variant="default" 
                         className="w-full"
-                        onClick={() => onAskAboutCourse && onAskAboutCourse(course.name)}
+                        onClick={() => onAskAboutCourse && onAskAboutCourse(`${course.name} in India`)}
                       >
                         Ask about this course
                       </Button>
@@ -172,12 +172,12 @@ const CourseExplorer: React.FC<CourseExplorerProps> = ({ onAskAboutCourse }) => 
           <div className="text-center py-10">
             <Building className="h-12 w-12 mx-auto text-muted-foreground/50 mb-4" />
             <h3 className="text-lg font-medium mb-2">College Explorer</h3>
-            <p className="text-muted-foreground mb-6">Use the chatbot to ask about specific colleges for your chosen courses</p>
+            <p className="text-muted-foreground mb-6">Discover top colleges and universities across India</p>
             <Button 
-              onClick={() => onAskAboutCourse && onAskAboutCourse("top colleges for " + (levelFilter !== 'all' ? levelFilter + " " : "") + (fieldFilter !== 'all' ? fieldFilter : "courses"))}
+              onClick={() => onAskAboutCourse && onAskAboutCourse("top colleges in India for " + (levelFilter !== 'all' ? levelFilter + " " : "") + (fieldFilter !== 'all' ? fieldFilter : "courses"))}
               className="mx-auto"
             >
-              Ask about top colleges
+              Ask about Indian colleges
             </Button>
           </div>
         </TabsContent>
@@ -186,12 +186,12 @@ const CourseExplorer: React.FC<CourseExplorerProps> = ({ onAskAboutCourse }) => 
           <div className="text-center py-10">
             <BriefcaseIcon className="h-12 w-12 mx-auto text-muted-foreground/50 mb-4" />
             <h3 className="text-lg font-medium mb-2">Career Explorer</h3>
-            <p className="text-muted-foreground mb-6">Use the chatbot to ask about career opportunities for your fields of interest</p>
+            <p className="text-muted-foreground mb-6">Explore job opportunities and salary trends in the Indian job market</p>
             <Button 
-              onClick={() => onAskAboutCourse && onAskAboutCourse("career opportunities for " + (levelFilter !== 'all' ? levelFilter + " " : "") + (fieldFilter !== 'all' ? fieldFilter : "graduates"))}
+              onClick={() => onAskAboutCourse && onAskAboutCourse("career opportunities in India for " + (levelFilter !== 'all' ? levelFilter + " " : "") + (fieldFilter !== 'all' ? fieldFilter : "graduates"))}
               className="mx-auto"
             >
-              Explore career paths
+              Explore Indian job market
             </Button>
           </div>
         </TabsContent>

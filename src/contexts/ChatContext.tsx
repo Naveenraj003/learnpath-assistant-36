@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { Message } from '@/components/MessageBubble';
 import { v4 as uuidv4 } from 'uuid';
@@ -25,7 +24,7 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [messages, setMessages] = useState<Message[]>([
     {
       id: uuidv4(),
-      content: "Hi there! I'm your AI Career Assistant. I can help you explore courses, find colleges, and discover job opportunities. What would you like to know about today?",
+      content: "Namaste! I'm your AI Career Assistant for Indian students. I can help you explore courses in Indian universities, find top colleges across India, and discover job opportunities in the Indian market. What would you like to know about today?",
       sender: 'bot',
       timestamp: new Date(),
       status: 'sent'
@@ -73,7 +72,7 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setMessages([
       {
         id: uuidv4(),
-        content: "Hi there! I'm your AI Career Assistant. I can help you explore courses, find colleges, and discover job opportunities. What would you like to know about today?",
+        content: "Namaste! I'm your AI Career Assistant for Indian students. I can help you explore courses in Indian universities, find top colleges across India, and discover job opportunities in the Indian market. What would you like to know about today?",
         sender: 'bot',
         timestamp: new Date(),
         status: 'sent'
