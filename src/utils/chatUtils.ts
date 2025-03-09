@@ -1,4 +1,3 @@
-
 import { CourseLevel, SubjectArea } from '@/contexts/ChatContext';
 import { coursesData } from '@/data/coursesData';
 
@@ -259,7 +258,7 @@ function getAlternativeCollegeName(field: string) {
   }
 }
 
-function getIndianSalaryRange(field: string, career: string) {
+export function getIndianSalaryRange(field: string, career: string) {
   let min = 300000; // Base minimum 3 LPA
   let max = 600000; // Base maximum 6 LPA
   
@@ -290,7 +289,7 @@ function getIndianSalaryRange(field: string, career: string) {
   return { min, max };
 }
 
-function getIndianGrowthRate(field: string) {
+export function getIndianGrowthRate(field: string) {
   // Base growth rate between 5-8%
   let baseGrowth = 5 + Math.floor(Math.random() * 4);
   
@@ -315,7 +314,7 @@ function getIndianGrowthRate(field: string) {
   }
 }
 
-function getIndianCompanies(career: string, field: string) {
+export function getIndianCompanies(career: string, field: string) {
   const techCompanies = ["TCS", "Infosys", "Wipro", "HCL", "Tech Mahindra", "L&T Infotech", "Cognizant", "Accenture India"];
   const medicalCompanies = ["Apollo Hospitals", "Fortis Healthcare", "Max Healthcare", "Medanta", "AIIMS", "Cipla", "Dr. Reddy's Laboratories"];
   const businessCompanies = ["Reliance Industries", "Tata Consultancy Services", "HDFC Bank", "ICICI Bank", "ITC Limited", "Hindustan Unilever"];

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import { Sparkles, ArrowRight, GraduationCap, BookOpen, Building, BriefcaseIcon, ChevronDown } from 'lucide-react';
+import { BriefcaseIcon, BookOpen, Building, GraduationCap, ArrowRight, ChevronDown } from "lucide-react";
 import Header from '@/components/Header';
 import AnimatedTransition from '@/components/AnimatedTransition';
 import ChatInterface from '@/components/ChatInterface';
@@ -12,81 +12,125 @@ import CoursesModal from '@/components/CoursesModal';
 const HeroSection = () => {
   const { sendMessage } = useChat();
   const [isCoursesModalOpen, setIsCoursesModalOpen] = useState(false);
+  const [modalType, setModalType] = useState<'courses' | 'colleges'>('courses');
+  
+  const handleOpenCoursesModal = () => {
+    setModalType('courses');
+    setIsCoursesModalOpen(true);
+  };
+  
+  const handleOpenCollegesModal = () => {
+    setModalType('colleges');
+    setIsCoursesModalOpen(true);
+  };
   
   return (
     <section className="relative min-h-screen flex items-center px-4 overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-b from-blue-50 to-white pointer-events-none" />
+      <div className="absolute inset-0 -z-10 bg-[radial-gradient(45%_25%_at_50%_50%,rgba(247,248,250,0.2)_0%,rgba(24,24,27,0)_100%)]"></div>
       
-      <div className="container mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 pt-24 pb-16 relative z-10">
-        <AnimatedTransition className="flex flex-col justify-center">
-          <div className="inline-flex items-center mb-6 px-3 py-1 bg-primary/10 text-primary rounded-full w-fit">
-            <Sparkles className="h-4 w-4 mr-2" />
-            <span className="text-sm font-medium">AI-Powered Guidance</span>
-          </div>
-          
-          <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold mb-6 tracking-tight leading-tight">
-            Find Your Perfect <span className="text-primary">Educational Path</span>
-          </h1>
-          
-          <p className="text-xl text-muted-foreground mb-8 max-w-xl">
-            Get personalized course recommendations, college insights, and career guidance to make informed decisions about your future.
-          </p>
-          
-          <div className="flex flex-col sm:flex-row gap-4 mb-12">
-            <Button size="lg" className="group" onClick={() => {
-              const explorerSection = document.getElementById('explorer-section');
-              explorerSection?.scrollIntoView({ behavior: 'smooth' });
-            }}>
-              Explore Courses
-              <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
-            </Button>
-            
-            <Link to="/about">
-              <Button size="lg" variant="outline">
-                Learn More
-              </Button>
-            </Link>
-          </div>
-          
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-            <Stat 
-              icon={<BookOpen className="h-5 w-5 text-primary" />} 
-              value="300+" 
-              label="Courses" 
-              onClick={() => setIsCoursesModalOpen(true)}
-            />
-            <Stat icon={<Building className="h-5 w-5 text-primary" />} value="1000+" label="Colleges" />
-            <Stat icon={<BriefcaseIcon className="h-5 w-5 text-primary" />} value="500+" label="Careers" />
-            <Stat icon={<GraduationCap className="h-5 w-5 text-primary" />} value="24/7" label="Assistance" />
+      <div className="container mx-auto py-16 flex flex-col items-center">
+        <AnimatedTransition>
+          <div className="text-center mb-8">
+            <h1 className="text-4xl md:text-6xl font-bold mb-4 tracking-tighter">
+              Find Your Perfect <span className="text-primary">Educational Path</span> in India
+            </h1>
+            <p className="text-lg text-muted-foreground max-w-3xl mx-auto mb-8">
+              Discover the best courses, colleges, and career opportunities across India with personalized AI guidance.
+            </p>
           </div>
         </AnimatedTransition>
         
-        <AnimatedTransition className="relative" showDelay={200}>
-          <div className="relative lg:mt-12 h-[600px] z-10">
-            <div className="absolute top-0 left-0 right-0 bottom-0">
-              <ChatInterface />
+        <AnimatedTransition showDelay={100}>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12 w-full max-w-6xl">
+            <div className="bg-white rounded-xl shadow-lg p-6 border border-border/50">
+              <h2 className="text-2xl font-semibold mb-4">Indian Education Navigator</h2>
+              <p className="text-muted-foreground mb-4">
+                Explore top educational options in India with our AI-powered discovery tools.
+              </p>
+              
+              <div className="grid grid-cols-3 gap-2">
+                <Button asChild size="sm" className="w-full">
+                  <Link to="/courses">
+                    <BookOpen className="mr-1 h-4 w-4" />
+                    Courses
+                  </Link>
+                </Button>
+                <Button asChild size="sm" className="w-full">
+                  <Link to="/colleges">
+                    <Building className="mr-1 h-4 w-4" />
+                    Colleges
+                  </Link>
+                </Button>
+                <Button asChild size="sm" className="w-full">
+                  <Link to="/careers">
+                    <BriefcaseIcon className="mr-1 h-4 w-4" />
+                    Careers
+                  </Link>
+                </Button>
+              </div>
             </div>
+            
+            <div className="bg-white rounded-xl shadow-lg p-6 border border-border/50">
+              <h2 className="text-2xl font-semibold mb-4">Indian Education Stats</h2>
+              <p className="text-muted-foreground mb-4">
+                Comprehensive data on higher education in India.
+              </p>
+              
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                <Stat 
+                  icon={<BookOpen className="h-5 w-5 text-primary" />} 
+                  value="300+" 
+                  label="Courses" 
+                  onClick={handleOpenCoursesModal}
+                />
+                <Stat 
+                  icon={<Building className="h-5 w-5 text-primary" />} 
+                  value="1000+" 
+                  label="Colleges" 
+                  onClick={handleOpenCollegesModal}
+                />
+                <Stat 
+                  icon={<BriefcaseIcon className="h-5 w-5 text-primary" />} 
+                  value="500+" 
+                  label="Careers" 
+                  onClick={() => window.location.href = '/careers'}
+                />
+                <Stat icon={<GraduationCap className="h-5 w-5 text-primary" />} value="24/7" label="Assistance" />
+              </div>
+            </div>
+          </div>
+        </AnimatedTransition>
+        
+        <AnimatedTransition showDelay={200}>
+          <div className="w-full max-w-6xl bg-white rounded-xl shadow-lg p-6 border border-border/50">
+            <h2 className="text-2xl font-semibold mb-6">Ask About Indian Education</h2>
+            <ChatInterface />
+          </div>
+        </AnimatedTransition>
+        
+        <AnimatedTransition showDelay={300}>
+          <div className="mt-16 w-full max-w-6xl">
+            <h2 className="text-2xl font-semibold mb-6 text-center">Course Explorer for Indian Students</h2>
+            <CourseExplorer 
+              onAskAboutCourse={(courseName) => {
+                sendMessage(`Tell me about ${courseName}`);
+              }}
+            />
           </div>
         </AnimatedTransition>
       </div>
       
-      <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
-        <Button 
-          variant="ghost" 
-          size="sm" 
-          className="rounded-full"
-          onClick={() => {
-            const featuresSection = document.getElementById('features-section');
-            featuresSection?.scrollIntoView({ behavior: 'smooth' });
-          }}
-        >
+      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 animate-bounce">
+        <Button variant="outline" size="sm" className="rounded-full flex items-center gap-1">
+          <span className="text-xs">Scroll for more</span>
           <ChevronDown className="h-5 w-5" />
         </Button>
       </div>
       
       <CoursesModal 
         isOpen={isCoursesModalOpen} 
-        onClose={() => setIsCoursesModalOpen(false)} 
+        onClose={() => setIsCoursesModalOpen(false)}
+        type={modalType}
       />
     </section>
   );
