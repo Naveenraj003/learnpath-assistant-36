@@ -11,6 +11,7 @@ import NotFound from "./pages/NotFound";
 import CoursesPage from "./pages/CoursesPage";
 import CollegesPage from "./pages/CollegesPage";
 import CareersPage from "./pages/CareersPage";
+import ThreeDBackground from "./components/ThreeDBackground";
 
 const queryClient = new QueryClient();
 
@@ -18,6 +19,7 @@ const App = () => (
   <QueryClientProvider client={queryClient}>
     <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
       <TooltipProvider>
+        <ThreeDBackground />
         <Toaster />
         <Sonner />
         <BrowserRouter>

@@ -35,6 +35,36 @@
 
     --radius: 0.75rem;
   }
+
+  .dark {
+    --background: 222 47% 11%;
+    --foreground: 210 40% 98%;
+
+    --card: 222 47% 11%;
+    --card-foreground: 210 40% 98%;
+
+    --popover: 222 47% 11%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 217 91% 60%;
+    --primary-foreground: 210 40% 98%;
+
+    --secondary: 217 19% 27%;
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 217 19% 27%;
+    --muted-foreground: 215 20% 65%;
+
+    --accent: 217 19% 27%;
+    --accent-foreground: 210 40% 98%;
+
+    --destructive: 0 62% 30%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 217 19% 27%;
+    --input: 217 19% 27%;
+    --ring: 224 76% 48%;
+  }
 }
 
 @layer base {
@@ -75,11 +105,11 @@
 
 @layer components {
   .glass-panel {
-    @apply backdrop-blur-lg bg-white/70 dark:bg-black/50 border border-white/20 dark:border-black/20 shadow-lg;
+    @apply backdrop-blur-lg bg-white/10 dark:bg-black/20 border border-white/20 dark:border-white/10 shadow-lg;
   }
   
   .glass-input {
-    @apply bg-white/30 border border-white/30 backdrop-blur-sm focus:bg-white/50 transition-all duration-300;
+    @apply bg-white/30 dark:bg-black/30 border border-white/30 dark:border-white/10 backdrop-blur-sm focus:bg-white/50 dark:focus:bg-black/40 transition-all duration-300;
   }
 
   .chat-bubble-user {
@@ -137,4 +167,13 @@ html {
   opacity: 0;
   transform: translateY(-10px);
   transition: opacity 300ms, transform 300ms;
+}
+
+/* Python integration styling */
+.python-output {
+  @apply font-mono text-sm p-4 rounded-md bg-black/80 text-green-400 overflow-x-auto;
+}
+
+.python-code {
+  @apply font-mono text-sm p-4 rounded-md bg-black/80 text-blue-400 overflow-x-auto;
 }

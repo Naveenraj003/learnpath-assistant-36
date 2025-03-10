@@ -1,15 +1,34 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { cn } from "@/lib/utils";
 import { ModeToggle } from "@/components/ui/mode-toggle";
-import { GraduationCap, BookOpen, Building, BriefcaseIcon } from "lucide-react";
+import { 
+  GraduationCap,
+  Menu,
+  X,
+  BookOpen, 
+  Building, 
+  BriefcaseIcon 
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
 interface HeaderProps {
   className?: string;
 }
 
 const Header = ({ className }: HeaderProps) => {
+  const [isOpen, setIsOpen] = useState(false);
+  
+  const menuItems = [
+    { path: '/', label: 'Home', icon: null },
+    { path: '/courses', label: 'Courses', icon: <BookOpen className="h-4 w-4" /> },
+    { path: '/colleges', label: 'Colleges', icon: <Building className="h-4 w-4" /> },
+    { path: '/careers', label: 'Careers', icon: <BriefcaseIcon className="h-4 w-4" /> },
+    { path: '/about', label: 'About', icon: null }
+  ];
+
   return (
     <header className={cn("w-full py-4 px-6 flex items-center justify-between bg-background/60 backdrop-blur-md border-b", className)}>
       <Link to="/" className="flex items-center gap-2">
@@ -18,47 +37,46 @@ const Header = ({ className }: HeaderProps) => {
       </Link>
       
       <div className="flex items-center gap-4">
+        {/* Desktop navigation */}
         <nav className="hidden md:flex items-center gap-6">
-          <Link 
-            to="/" 
-            className="text-sm font-medium transition-colors hover:text-primary"
-          >
-            Home
-          </Link>
-          
-          <Link 
-            to="/courses" 
-            className="text-sm font-medium transition-colors hover:text-primary flex items-center gap-1"
-          >
-            <BookOpen className="h-4 w-4" />
-            Courses
-          </Link>
-          
-          <Link 
-            to="/colleges" 
-            className="text-sm font-medium transition-colors hover:text-primary flex items-center gap-1"
-          >
-            <Building className="h-4 w-4" />
-            Colleges
-          </Link>
-          
-          <Link 
-            to="/careers" 
-            className="text-sm font-medium transition-colors hover:text-primary flex items-center gap-1"
-          >
-            <BriefcaseIcon className="h-4 w-4" />
-            Careers
-          </Link>
-          
-          <Link 
-            to="/about" 
-            className="text-sm font-medium transition-colors hover:text-primary"
-          >
-            About
-          </Link>
+          {menuItems.map((item) => (
+            <Link 
+              key={item.path}
+              to={item.path} 
+              className="text-sm font-medium transition-colors hover:text-primary flex items-center gap-1"
+            >
+              {item.icon}
+              <span>{item.label}</span>
+            </Link>
+          ))}
         </nav>
         
         <ModeToggle />
+        
+        {/* Mobile navigation */}
+        <Sheet open={isOpen} onOpenChange={setIsOpen}>
+          <SheetTrigger asChild className="md:hidden">
+            <Button variant="ghost" size="icon">
+              <Menu className="h-5 w-5" />
+              <span className="sr-only">Toggle menu</span>
+            </Button>
+          </SheetTrigger>
+          <SheetContent side="right" className="w-[240px] sm:w-[300px]">
+            <div className="flex flex-col gap-6 mt-8">
+              {menuItems.map((item) => (
+                <Link 
+                  key={item.path}
+                  to={item.path} 
+                  className="text-lg font-medium transition-colors hover:text-primary flex items-center gap-2"
+                  onClick={() => setIsOpen(false)}
+                >
+                  {item.icon}
+                  <span>{item.label}</span>
+                </Link>
+              ))}
+            </div>
+          </SheetContent>
+        </Sheet>
       </div>
     </header>
   );
