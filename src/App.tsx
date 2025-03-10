@@ -11,6 +11,7 @@ import NotFound from "./pages/NotFound";
 import CoursesPage from "./pages/CoursesPage";
 import CollegesPage from "./pages/CollegesPage";
 import CareersPage from "./pages/CareersPage";
+import CollegeDetailsPage from "./pages/CollegeDetailsPage";
 import ThreeDBackground from "./components/ThreeDBackground";
 
 const queryClient = new QueryClient();
@@ -28,6 +29,7 @@ const App = () => (
             <Route path="/about" element={<About />} />
             <Route path="/courses" element={<CoursesPage />} />
             <Route path="/colleges" element={<CollegesPage />} />
+            <Route path="/colleges/:collegeName" element={<CollegeDetailsPage />} />
             <Route path="/careers" element={<CareersPage />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
