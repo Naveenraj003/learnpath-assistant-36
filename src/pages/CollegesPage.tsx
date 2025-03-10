@@ -14,6 +14,8 @@ import AnimatedTransition from '@/components/AnimatedTransition';
 const CollegesPage = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [locationFilter, setLocationFilter] = useState('all');
+  const [stateFilter, setStateFilter] = useState('all');
+  const [districtFilter, setDistrictFilter] = useState('all');
   const [selectedCollege, setSelectedCollege] = useState<College | null>(null);
 
   // Extract all colleges from all courses
@@ -31,15 +33,49 @@ const CollegesPage = () => {
       .map(college => college.location)
   )];
   
+  // Extract states from location (assume format: District, State, India)
+  const uniqueStates = [...new Set(
+    uniqueColleges
+      .filter(college => college.location.includes('India'))
+      .map(college => {
+        const parts = college.location.split(',');
+        return parts.length > 1 ? parts[1].trim() : '';
+      })
+      .filter(state => state !== '')
+  )];
+  
+  // Extract districts filtered by selected state
+  const uniqueDistricts = [...new Set(
+    uniqueColleges
+      .filter(college => {
+        if (!college.location.includes('India')) return false;
+        if (stateFilter === 'all') return true;
+        
+        const parts = college.location.split(',');
+        return parts.length > 1 && parts[1].trim() === stateFilter;
+      })
+      .map(college => {
+        const parts = college.location.split(',');
+        return parts.length > 0 ? parts[0].trim() : '';
+      })
+      .filter(district => district !== '')
+  )];
+  
   // Filter colleges based on user selections
   const filteredColleges = uniqueColleges.filter(college => {
     const matchesSearch = searchTerm === '' || 
       college.name.toLowerCase().includes(searchTerm.toLowerCase());
     
+    const locationParts = college.location.split(',').map(part => part.trim());
+    const district = locationParts[0] || '';
+    const state = locationParts.length > 1 ? locationParts[1] : '';
+    
     const matchesLocation = locationFilter === 'all' || college.location === locationFilter;
+    const matchesState = stateFilter === 'all' || state === stateFilter;
+    const matchesDistrict = districtFilter === 'all' || district === districtFilter;
     const isInIndia = college.location.includes('India');
     
-    return matchesSearch && matchesLocation && isInIndia;
+    return matchesSearch && (matchesLocation || (matchesState && matchesDistrict)) && isInIndia;
   });
 
   // Find courses for a specific college
@@ -55,11 +91,11 @@ const CollegesPage = () => {
       
       <main className="flex-1 container mx-auto py-8 px-4">
         <AnimatedTransition>
-          <h1 className="text-3xl font-bold mb-8">Top Colleges in India</h1>
+          <h1 className="text-3xl font-bold mb-8 text-gradient">Top Colleges in India</h1>
           
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
             <div className="lg:col-span-1">
-              <Card>
+              <Card className="glass-panel">
                 <CardHeader>
                   <CardTitle className="text-xl">Filters</CardTitle>
                   <CardDescription>Refine your college search</CardDescription>
@@ -74,18 +110,65 @@ const CollegesPage = () => {
                         placeholder="Search colleges..."
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
-                        className="pl-10"
+                        className="pl-10 glass-input"
                       />
                     </div>
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium">State</label>
+                    <Select
+                      value={stateFilter}
+                      onValueChange={(value) => {
+                        setStateFilter(value);
+                        setDistrictFilter('all'); // Reset district when state changes
+                      }}
+                    >
+                      <SelectTrigger className="glass-input">
+                        <SelectValue placeholder="Select state" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">All States</SelectItem>
+                        {uniqueStates.map((state) => (
+                          <SelectItem key={state} value={state}>{state}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium">District</label>
+                    <Select
+                      value={districtFilter}
+                      onValueChange={setDistrictFilter}
+                      disabled={stateFilter === 'all'}
+                    >
+                      <SelectTrigger className="glass-input">
+                        <SelectValue placeholder={stateFilter === 'all' ? "Select state first" : "Select district"} />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">All Districts</SelectItem>
+                        {uniqueDistricts.map((district) => (
+                          <SelectItem key={district} value={district}>{district}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </div>
                   
                   <div className="space-y-2">
                     <label className="text-sm font-medium">Location in India</label>
                     <Select
                       value={locationFilter}
-                      onValueChange={setLocationFilter}
+                      onValueChange={(value) => {
+                        setLocationFilter(value);
+                        if (value !== 'all') {
+                          // Reset state and district when specific location is selected
+                          setStateFilter('all');
+                          setDistrictFilter('all');
+                        }
+                      }}
                     >
-                      <SelectTrigger>
+                      <SelectTrigger className="glass-input">
                         <SelectValue placeholder="Select location" />
                       </SelectTrigger>
                       <SelectContent>
@@ -103,6 +186,8 @@ const CollegesPage = () => {
                     onClick={() => {
                       setSearchTerm('');
                       setLocationFilter('all');
+                      setStateFilter('all');
+                      setDistrictFilter('all');
                     }}
                   >
                     Reset Filters
@@ -127,6 +212,8 @@ const CollegesPage = () => {
                       onClick={() => {
                         setSearchTerm('');
                         setLocationFilter('all');
+                        setStateFilter('all');
+                        setDistrictFilter('all');
                       }}
                     >
                       Reset Filters

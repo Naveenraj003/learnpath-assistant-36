@@ -3,6 +3,7 @@ import React, { useRef } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { useTheme } from 'next-themes';
 import { OrbitControls } from '@react-three/drei';
+import * as THREE from 'three';
 
 const FloatingGraduationCap = ({ position, rotationSpeed = 0.01 }) => {
   const mesh = useRef<THREE.Mesh>(null);
@@ -16,7 +17,6 @@ const FloatingGraduationCap = ({ position, rotationSpeed = 0.01 }) => {
     }
   });
 
-  // Simplified graduation cap shape
   return (
     <mesh position={position} ref={mesh}>
       <boxGeometry args={[1, 0.1, 1]} />
@@ -33,15 +33,15 @@ const FloatingGraduationCap = ({ position, rotationSpeed = 0.01 }) => {
   );
 };
 
-const FloatingSpheres = () => {
+const FloatingBooks = () => {
   const { theme } = useTheme();
   const isDark = theme === 'dark';
   
-  const spheres = Array.from({ length: 10 }).map((_, i) => ({
+  const books = Array.from({ length: 15 }).map((_, i) => ({
     position: [
-      (Math.random() - 0.5) * 15,
-      (Math.random() - 0.5) * 15,
-      (Math.random() - 0.5) * 15
+      (Math.random() - 0.5) * 20,
+      (Math.random() - 0.5) * 20,
+      (Math.random() - 0.5) * 20
     ],
     size: Math.random() * 0.5 + 0.1,
     speed: Math.random() * 0.01 + 0.001
@@ -49,11 +49,11 @@ const FloatingSpheres = () => {
 
   return (
     <>
-      {spheres.map((sphere, i) => (
+      {books.map((book, i) => (
         <FloatingGraduationCap 
           key={i} 
-          position={sphere.position} 
-          rotationSpeed={sphere.speed} 
+          position={book.position} 
+          rotationSpeed={book.speed} 
         />
       ))}
     </>
@@ -66,23 +66,23 @@ const ThreeDBackground: React.FC = () => {
   
   return (
     <div className="fixed inset-0 -z-10 w-full h-full">
-      <Canvas camera={{ position: [0, 0, 15], fov: 60 }}>
-        <ambientLight intensity={isDark ? 0.1 : 0.4} />
+      <Canvas camera={{ position: [0, 0, 20], fov: 60 }}>
+        <ambientLight intensity={isDark ? 0.3 : 0.6} />
         <directionalLight
           position={[10, 10, 5]}
-          intensity={isDark ? 0.2 : 0.6}
+          intensity={isDark ? 0.5 : 0.8}
           color={isDark ? "#8b5cf6" : "#ffffff"}
         />
-        <FloatingSpheres />
+        <pointLight position={[-10, -10, -10]} intensity={isDark ? 0.2 : 0.5} color={isDark ? "#4c1d95" : "#c4b5fd"} />
+        <FloatingBooks />
         <OrbitControls 
           enableZoom={false} 
           enablePan={false} 
           enableRotate={true}
           autoRotate={true}
           autoRotateSpeed={0.5}
-          maxPolarAngle={Math.PI / 2}
-          minPolarAngle={Math.PI / 2}
         />
+        <fog attach="fog" args={[isDark ? "#020617" : "#f8fafc", 5, 30]} />
       </Canvas>
     </div>
   );
