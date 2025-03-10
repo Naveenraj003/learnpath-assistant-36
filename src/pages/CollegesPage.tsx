@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import Header from '@/components/Header';
 import { Input } from "@/components/ui/input";
@@ -23,22 +22,18 @@ const CollegesPage = () => {
   const [showCoursesModal, setShowCoursesModal] = useState(false);
   const [modalType, setModalType] = useState<'courses' | 'colleges'>('colleges');
 
-  // Extract all colleges from all courses
   const allColleges = coursesData.flatMap(course => course.topColleges);
   
-  // Remove duplicates based on name
   const uniqueColleges = allColleges.filter((college, index, self) =>
     index === self.findIndex((c) => c.name === college.name)
   );
   
-  // Extract unique locations in India
   const uniqueLocations = [...new Set(
     uniqueColleges
       .filter(college => college.location.includes('India'))
       .map(college => college.location)
   )];
   
-  // Extract states from location (assume format: District, State, India)
   const uniqueStates = [...new Set(
     uniqueColleges
       .filter(college => college.location.includes('India'))
@@ -49,7 +44,6 @@ const CollegesPage = () => {
       .filter(state => state !== '')
   )];
   
-  // Extract districts filtered by selected state
   const uniqueDistricts = [...new Set(
     uniqueColleges
       .filter(college => {
@@ -66,7 +60,6 @@ const CollegesPage = () => {
       .filter(district => district !== '')
   )];
   
-  // Filter colleges based on user selections
   const filteredColleges = uniqueColleges.filter(college => {
     const matchesSearch = searchTerm === '' || 
       college.name.toLowerCase().includes(searchTerm.toLowerCase());
@@ -83,16 +76,13 @@ const CollegesPage = () => {
     return matchesSearch && (matchesLocation || (matchesState && matchesDistrict)) && isInIndia;
   });
 
-  // Find courses for a specific college
   const getCoursesForCollege = (collegeName: string) => {
     return coursesData.filter(course => 
       course.topColleges.some(college => college.name === collegeName)
     );
   };
 
-  // Mock data for placement details
   const getPlacementDetails = (collegeName: string) => {
-    // In a real app, this would come from your backend
     return {
       averageSalary: "₹8.5 LPA",
       highestSalary: "₹42 LPA",
@@ -105,9 +95,7 @@ const CollegesPage = () => {
     };
   };
 
-  // Mock data for college achievements
   const getCollegeAchievements = (collegeName: string) => {
-    // In a real app, this would come from your backend
     return [
       "Ranked #1 in Engineering by NIRF 2023",
       "Awarded 'Institution of Excellence' by UGC",
@@ -118,9 +106,7 @@ const CollegesPage = () => {
     ];
   };
 
-  // Mock data for notable alumni
   const getNotableAlumni = (collegeName: string) => {
-    // In a real app, this would come from your backend
     return [
       {
         name: "Sundar Pichai",
@@ -143,6 +129,11 @@ const CollegesPage = () => {
         batch: "1978"
       }
     ];
+  };
+
+  const handleViewDetails = (college: College) => {
+    setSelectedCollege(college);
+    setActiveTab("overview");
   };
 
   return (
@@ -181,7 +172,7 @@ const CollegesPage = () => {
                       value={stateFilter}
                       onValueChange={(value) => {
                         setStateFilter(value);
-                        setDistrictFilter('all'); // Reset district when state changes
+                        setDistrictFilter('all');
                       }}
                     >
                       <SelectTrigger className="glass-input">
@@ -222,7 +213,6 @@ const CollegesPage = () => {
                       onValueChange={(value) => {
                         setLocationFilter(value);
                         if (value !== 'all') {
-                          // Reset state and district when specific location is selected
                           setStateFilter('all');
                           setDistrictFilter('all');
                         }
@@ -281,10 +271,7 @@ const CollegesPage = () => {
                   </div>
                 ) : (
                   filteredColleges.map((college, index) => (
-                    <Card key={index} className="h-full cursor-pointer hover:border-primary transition-colors" onClick={() => {
-                      setSelectedCollege(college);
-                      setActiveTab("overview");
-                    }}>
+                    <Card key={index} className="h-full cursor-pointer hover:border-primary transition-colors">
                       <CardHeader className="pb-2">
                         <div className="flex justify-between items-start mb-2">
                           <Badge variant="outline" className="bg-primary/10 text-primary border-primary/20">
@@ -306,7 +293,14 @@ const CollegesPage = () => {
                         </div>
                       </CardContent>
                       <CardFooter>
-                        <Button size="sm" className="w-full" variant="outline">View Details</Button>
+                        <Button 
+                          size="sm" 
+                          className="w-full" 
+                          variant="outline"
+                          onClick={() => handleViewDetails(college)}
+                        >
+                          View Details
+                        </Button>
                       </CardFooter>
                     </Card>
                   ))
