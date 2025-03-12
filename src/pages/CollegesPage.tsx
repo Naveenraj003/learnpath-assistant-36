@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from '@/components/Header';
@@ -27,7 +26,6 @@ const CollegesPage = () => {
     index === self.findIndex((c) => c.name === college.name)
   );
   
-  // Extract countries from locations
   const uniqueCountries = [...new Set(
     uniqueColleges.map(college => {
       const parts = college.location.split(',');
@@ -49,14 +47,15 @@ const CollegesPage = () => {
     uniqueColleges
       .filter(college => {
         if (countryFilter !== 'all' && !college.location.includes(countryFilter)) return false;
-        if (stateFilter === 'all') return true;
-        
-        const parts = college.location.split(',');
-        return parts.length > 1 && parts[1].trim() === stateFilter;
+        if (stateFilter !== 'all') {
+          const parts = college.location.split(',');
+          return parts.length > 1 && parts[1].trim() === stateFilter;
+        }
+        return true;
       })
       .map(college => {
         const parts = college.location.split(',');
-        return parts.length > 0 ? parts[0].trim() : '';
+        return parts[0].trim();
       })
       .filter(district => district !== '')
   )];
@@ -66,17 +65,15 @@ const CollegesPage = () => {
       college.name.toLowerCase().includes(searchTerm.toLowerCase());
     
     const locationParts = college.location.split(',').map(part => part.trim());
-    const district = locationParts[0] || '';
+    const district = locationParts[0];
     const state = locationParts.length > 1 ? locationParts[1] : '';
-    const country = locationParts.length > 2 ? locationParts[2] : 
-                  (locationParts.length > 1 ? locationParts[locationParts.length - 1] : locationParts[0]);
+    const country = locationParts.length > 2 ? locationParts[2] : locationParts[locationParts.length - 1];
     
     const matchesCountry = countryFilter === 'all' || country.includes(countryFilter);
     const matchesState = stateFilter === 'all' || state === stateFilter;
     const matchesDistrict = districtFilter === 'all' || district === districtFilter;
     
-    return matchesSearch && matchesCountry && (stateFilter === 'all' || matchesState) && 
-           (districtFilter === 'all' || matchesDistrict);
+    return matchesSearch && matchesCountry && matchesState && matchesDistrict;
   });
 
   const handleViewDetails = (college: College) => {

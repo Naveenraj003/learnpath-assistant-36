@@ -4,28 +4,32 @@ import Header from '@/components/Header';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { BookOpen, BriefcaseIcon, Compass, Heart, Goal, GraduationCap, Building } from 'lucide-react';
+import { BookOpen, BriefcaseIcon, Compass, Heart, GraduationCap, Building } from 'lucide-react';
 import AnimatedTransition from '@/components/AnimatedTransition';
 import { Link } from 'react-router-dom';
 
 const About = () => {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white to-blue-50">
+    <div className="min-h-screen bg-background">
       <Header />
       
-      <main className="pt-24 pb-16 px-4">
+      <main className="pt-16 pb-16 px-4">
         <div className="max-w-4xl mx-auto">
           <AnimatedTransition>
-            <Badge className="mb-3 bg-primary/10 text-primary border-primary/20 hover:bg-primary/20">About EduPathfinder</Badge>
-            <h1 className="text-4xl font-bold mb-4">Guiding Students Towards Their Ideal Future</h1>
-            <p className="text-lg text-muted-foreground mb-8">
-              EduPathfinder is an AI-powered educational guidance platform designed to help students make informed decisions about their academic and career paths.
-            </p>
+            <div className="text-center mb-12">
+              <Badge className="mb-3 bg-primary/10 text-primary border-primary/20 hover:bg-primary/20">About EduPathfinder</Badge>
+              <h1 className="text-4xl font-bold mb-4 bg-gradient-to-r from-primary via-primary/80 to-primary/60 bg-clip-text text-transparent">
+                Guiding Students Towards Their Ideal Future
+              </h1>
+              <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+                EduPathfinder is your compass in the world of education, helping you navigate through courses, colleges, and careers with confidence.
+              </p>
+            </div>
           </AnimatedTransition>
           
           <AnimatedTransition showDelay={100}>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
-              <Card className="p-6 glass-panel">
+              <Card className="p-6 hover:shadow-lg transition-all duration-300 bg-card">
                 <div className="flex items-start gap-4">
                   <div className="bg-primary/10 p-3 rounded-md">
                     <Compass className="h-6 w-6 text-primary" />
@@ -39,7 +43,7 @@ const About = () => {
                 </div>
               </Card>
               
-              <Card className="p-6 glass-panel">
+              <Card className="p-6 hover:shadow-lg transition-all duration-300 bg-card">
                 <div className="flex items-start gap-4">
                   <div className="bg-primary/10 p-3 rounded-md">
                     <Heart className="h-6 w-6 text-primary" />
@@ -56,43 +60,43 @@ const About = () => {
           </AnimatedTransition>
           
           <AnimatedTransition showDelay={200}>
-            <h2 className="text-2xl font-bold mb-6">How We Help Students</h2>
+            <h2 className="text-2xl font-bold mb-6 text-center">How We Help Students</h2>
             
-            <div className="space-y-6 mb-12">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
               <FeatureCard 
                 icon={<BookOpen className="h-6 w-6 text-primary" />}
                 title="Course Exploration"
-                description="Discover undergraduate and postgraduate programs across various fields, with detailed information about duration, curriculum, and requirements."
+                description="Discover programs across various fields, with detailed information about curriculum and requirements."
               />
               
               <FeatureCard 
                 icon={<Building className="h-6 w-6 text-primary" />}
                 title="College Recommendations"
-                description="Get personalized college recommendations based on your academic interests, location preferences, and career goals."
+                description="Get personalized college recommendations based on your preferences and goals."
               />
               
               <FeatureCard 
                 icon={<BriefcaseIcon className="h-6 w-6 text-primary" />}
                 title="Career Insights"
-                description="Explore potential career paths linked to different courses, including salary expectations, industry growth, and required skills."
+                description="Explore potential career paths with salary expectations and industry growth insights."
               />
               
               <FeatureCard 
                 icon={<GraduationCap className="h-6 w-6 text-primary" />}
                 title="Personalized Guidance"
-                description="Receive tailored advice that considers your academic background, interests, and career aspirations."
+                description="Receive tailored advice that considers your background and aspirations."
               />
             </div>
           </AnimatedTransition>
           
           <AnimatedTransition showDelay={300}>
-            <div className="text-center">
+            <div className="text-center bg-primary/5 rounded-lg p-8 backdrop-blur-sm">
               <h2 className="text-2xl font-bold mb-4">Ready to Start Your Journey?</h2>
               <p className="text-muted-foreground mb-6">
                 Our AI assistant is available 24/7 to answer your questions and guide you through your educational choices.
               </p>
               <Link to="/">
-                <Button size="lg" className="animate-float">
+                <Button size="lg" className="bg-primary hover:bg-primary/90">
                   Begin Exploring
                 </Button>
               </Link>
@@ -101,25 +105,21 @@ const About = () => {
         </div>
       </main>
       
-      <footer className="bg-white border-t py-8 px-4">
-        <div className="max-w-4xl mx-auto text-center">
-          <p className="text-sm text-muted-foreground">
-            © {new Date().getFullYear()} EduPathfinder. All rights reserved.
-          </p>
+      <footer className="bg-card border-t py-8 px-4">
+        <div className="max-w-4xl mx-auto text-center text-sm text-muted-foreground">
+          © {new Date().getFullYear()} EduPathfinder. All rights reserved.
         </div>
       </footer>
     </div>
   );
 };
 
-interface FeatureCardProps {
+const FeatureCard: React.FC<{
   icon: React.ReactNode;
   title: string;
   description: string;
-}
-
-const FeatureCard: React.FC<FeatureCardProps> = ({ icon, title, description }) => (
-  <Card className="p-6 border border-border/50 hover:border-border transition-all duration-300 hover:shadow-md">
+}> = ({ icon, title, description }) => (
+  <Card className="p-6 hover:shadow-lg transition-all duration-300 bg-card/50 backdrop-blur-sm border-primary/10">
     <div className="flex items-start gap-4">
       <div className="bg-primary/10 p-3 rounded-md">
         {icon}

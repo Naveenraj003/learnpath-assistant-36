@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Header from '@/components/Header';
@@ -76,30 +75,30 @@ const CourseDetailsPage = () => {
               <CardContent className="pt-6">
                 <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
                   <TabsList className="w-full justify-start mb-6 bg-muted/50">
-                    <TabsTrigger value="overview" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">Overview</TabsTrigger>
-                    <TabsTrigger value="future" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">Future Scope</TabsTrigger>
-                    <TabsTrigger value="jobs" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">Job Opportunities</TabsTrigger>
-                    <TabsTrigger value="colleges" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">Top Colleges</TabsTrigger>
+                    <TabsTrigger value="overview">Overview</TabsTrigger>
+                    <TabsTrigger value="future">Future Scope</TabsTrigger>
+                    <TabsTrigger value="jobs">Job Opportunities</TabsTrigger>
+                    <TabsTrigger value="colleges">Top Colleges</TabsTrigger>
                   </TabsList>
                   
                   <TabsContent value="overview" className="mt-0">
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                      <div>
+                    <div className="space-y-4">
+                      <div className="text-left">
                         <h3 className="text-lg font-semibold mb-3 flex items-center gap-2">
                           <BookOpen className="h-4 w-4 text-primary" />
                           Course Details
                         </h3>
                         <div className="space-y-2 bg-muted/10 p-4 rounded-lg border border-border">
-                          <div className="flex justify-between">
-                            <span className="text-muted-foreground">Level:</span>
+                          <div className="flex items-center gap-8">
+                            <span className="text-muted-foreground min-w-24">Level:</span>
                             <span>{course.level}</span>
                           </div>
-                          <div className="flex justify-between">
-                            <span className="text-muted-foreground">Field:</span>
+                          <div className="flex items-center gap-8">
+                            <span className="text-muted-foreground min-w-24">Field:</span>
                             <span>{course.field}</span>
                           </div>
-                          <div className="flex justify-between">
-                            <span className="text-muted-foreground">Duration:</span>
+                          <div className="flex items-center gap-8">
+                            <span className="text-muted-foreground min-w-24">Duration:</span>
                             <span>{course.duration}</span>
                           </div>
                         </div>
@@ -117,29 +116,6 @@ const CourseDetailsPage = () => {
                               <span>{career}</span>
                             </li>
                           ))}
-                        </ul>
-                      </div>
-                      
-                      <div>
-                        <h3 className="text-lg font-semibold mb-3 flex items-center gap-2">
-                          <Building className="h-4 w-4 text-primary" />
-                          Top Colleges
-                        </h3>
-                        <ul className="space-y-1 bg-muted/10 p-4 rounded-lg border border-border">
-                          {course.topColleges
-                            .filter(college => college.location.includes('India'))
-                            .slice(0, 5)
-                            .map((college, index) => (
-                              <li key={index} className="flex items-center gap-2">
-                                <div className="w-1.5 h-1.5 rounded-full bg-primary"></div>
-                                <span>{college.name}</span>
-                              </li>
-                            ))}
-                          {course.topColleges.filter(college => college.location.includes('India')).length > 5 && (
-                            <li className="text-sm text-muted-foreground mt-2 italic">
-                              + {course.topColleges.filter(college => college.location.includes('India')).length - 5} more colleges
-                            </li>
-                          )}
                         </ul>
                       </div>
                     </div>
