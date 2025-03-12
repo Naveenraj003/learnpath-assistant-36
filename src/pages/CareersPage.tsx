@@ -1,5 +1,6 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Header from '@/components/Header';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -7,7 +8,6 @@ import { Input } from '@/components/ui/input';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from '@/components/ui/badge';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { coursesData } from '@/data/coursesData';
 import { BriefcaseIcon, Globe, TrendingUp, MapPin, Building, DollarSign, Calendar, Search, Banknote, LineChart, Newspaper, Sparkles } from 'lucide-react';
 import AnimatedTransition from '@/components/AnimatedTransition';
@@ -86,6 +86,7 @@ const futureScope = {
 };
 
 const CareersPage = () => {
+  const navigate = useNavigate();
   const [selectedRegion, setSelectedRegion] = useState('global');
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCourse, setSelectedCourse] = useState('all');
@@ -136,6 +137,10 @@ const CareersPage = () => {
     };
     
     return futureScope[fieldMap[field] || 'technology'];
+  };
+
+  const handleViewCareerDetails = (career: string) => {
+    navigate(`/careers/${encodeURIComponent(career)}`);
   };
 
   return (
@@ -340,7 +345,14 @@ const CareersPage = () => {
                             </div>
                           </CardContent>
                           <CardFooter>
-                            <Button size="sm" variant="outline" className="w-full">View Details</Button>
+                            <Button 
+                              size="sm" 
+                              variant="outline" 
+                              className="w-full"
+                              onClick={() => handleViewCareerDetails(item.career)}
+                            >
+                              View Details
+                            </Button>
                           </CardFooter>
                         </Card>
                       ))}

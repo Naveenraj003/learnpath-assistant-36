@@ -9,8 +9,10 @@ import Index from "./pages/Index";
 import About from "./pages/About";
 import NotFound from "./pages/NotFound";
 import CoursesPage from "./pages/CoursesPage";
+import CourseDetailsPage from "./pages/CourseDetailsPage";
 import CollegesPage from "./pages/CollegesPage";
 import CareersPage from "./pages/CareersPage";
+import CareerDetailsPage from "./pages/CareerDetailsPage";
 import CollegeDetailsPage from "./pages/CollegeDetailsPage";
 import LoginPage from "./pages/LoginPage";
 import ThreeDBackground from "./components/ThreeDBackground";
@@ -31,9 +33,11 @@ const App = () => (
               <Route path="/" element={<Index />} />
               <Route path="/about" element={<About />} />
               <Route path="/courses" element={<CoursesPage />} />
+              <Route path="/courses/:courseId" element={<CourseDetailsPage />} />
               <Route path="/colleges" element={<CollegesPage />} />
               <Route path="/colleges/:collegeName" element={<CollegeDetailsPage />} />
               <Route path="/careers" element={<CareersPage />} />
+              <Route path="/careers/:careerName" element={<CareerDetailsPage />} />
               <Route path="/login" element={<LoginPage />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
