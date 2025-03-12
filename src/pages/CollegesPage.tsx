@@ -15,7 +15,7 @@ import CoursesModal from '@/components/CoursesModal';
 const CollegesPage = () => {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
-  const [locationFilter, setLocationFilter] = useState('all');
+  const [countryFilter, setCountryFilter] = useState('all');
   const [stateFilter, setStateFilter] = useState('all');
   const [districtFilter, setDistrictFilter] = useState('all');
   const [showCoursesModal, setShowCoursesModal] = useState(false);
@@ -27,15 +27,17 @@ const CollegesPage = () => {
     index === self.findIndex((c) => c.name === college.name)
   );
   
-  const uniqueLocations = [...new Set(
-    uniqueColleges
-      .filter(college => college.location.includes('India'))
-      .map(college => college.location)
+  // Extract countries from locations
+  const uniqueCountries = [...new Set(
+    uniqueColleges.map(college => {
+      const parts = college.location.split(',');
+      return parts.length > 1 ? parts[parts.length - 1].trim() : parts[0].trim();
+    })
   )];
   
   const uniqueStates = [...new Set(
     uniqueColleges
-      .filter(college => college.location.includes('India'))
+      .filter(college => countryFilter === 'all' || college.location.includes(countryFilter))
       .map(college => {
         const parts = college.location.split(',');
         return parts.length > 1 ? parts[1].trim() : '';
@@ -46,7 +48,7 @@ const CollegesPage = () => {
   const uniqueDistricts = [...new Set(
     uniqueColleges
       .filter(college => {
-        if (!college.location.includes('India')) return false;
+        if (countryFilter !== 'all' && !college.location.includes(countryFilter)) return false;
         if (stateFilter === 'all') return true;
         
         const parts = college.location.split(',');
@@ -66,13 +68,15 @@ const CollegesPage = () => {
     const locationParts = college.location.split(',').map(part => part.trim());
     const district = locationParts[0] || '';
     const state = locationParts.length > 1 ? locationParts[1] : '';
+    const country = locationParts.length > 2 ? locationParts[2] : 
+                  (locationParts.length > 1 ? locationParts[locationParts.length - 1] : locationParts[0]);
     
-    const matchesLocation = locationFilter === 'all' || college.location === locationFilter;
+    const matchesCountry = countryFilter === 'all' || country.includes(countryFilter);
     const matchesState = stateFilter === 'all' || state === stateFilter;
     const matchesDistrict = districtFilter === 'all' || district === districtFilter;
-    const isInIndia = college.location.includes('India');
     
-    return matchesSearch && (matchesLocation || (matchesState && matchesDistrict)) && isInIndia;
+    return matchesSearch && matchesCountry && (stateFilter === 'all' || matchesState) && 
+           (districtFilter === 'all' || matchesDistrict);
   });
 
   const handleViewDetails = (college: College) => {
@@ -85,7 +89,7 @@ const CollegesPage = () => {
       
       <main className="flex-1 container mx-auto py-8 px-4">
         <AnimatedTransition>
-          <h1 className="text-3xl font-bold mb-8 text-gradient">Top Colleges in India</h1>
+          <h1 className="text-3xl font-bold mb-8 text-gradient">Top Colleges</h1>
           
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
             <div className="lg:col-span-1">
@@ -107,6 +111,28 @@ const CollegesPage = () => {
                         className="pl-10 glass-input"
                       />
                     </div>
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium">Country</label>
+                    <Select
+                      value={countryFilter}
+                      onValueChange={(value) => {
+                        setCountryFilter(value);
+                        setStateFilter('all');
+                        setDistrictFilter('all');
+                      }}
+                    >
+                      <SelectTrigger className="glass-input">
+                        <SelectValue placeholder="Select country" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">All Countries</SelectItem>
+                        {uniqueCountries.map((country) => (
+                          <SelectItem key={country} value={country}>{country}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </div>
                   
                   <div className="space-y-2">
@@ -149,36 +175,12 @@ const CollegesPage = () => {
                     </Select>
                   </div>
                   
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium">Location in India</label>
-                    <Select
-                      value={locationFilter}
-                      onValueChange={(value) => {
-                        setLocationFilter(value);
-                        if (value !== 'all') {
-                          setStateFilter('all');
-                          setDistrictFilter('all');
-                        }
-                      }}
-                    >
-                      <SelectTrigger className="glass-input">
-                        <SelectValue placeholder="Select location" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="all">All Locations</SelectItem>
-                        {uniqueLocations.map((location) => (
-                          <SelectItem key={location} value={location}>{location}</SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  
                   <Button 
                     variant="outline" 
                     className="w-full"
                     onClick={() => {
                       setSearchTerm('');
-                      setLocationFilter('all');
+                      setCountryFilter('all');
                       setStateFilter('all');
                       setDistrictFilter('all');
                     }}
@@ -204,7 +206,7 @@ const CollegesPage = () => {
                       variant="outline" 
                       onClick={() => {
                         setSearchTerm('');
-                        setLocationFilter('all');
+                        setCountryFilter('all');
                         setStateFilter('all');
                         setDistrictFilter('all');
                       }}
@@ -264,4 +266,3 @@ const CollegesPage = () => {
 };
 
 export default CollegesPage;
-
