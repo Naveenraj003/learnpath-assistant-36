@@ -3,10 +3,12 @@ import React, { useState, useRef, useEffect } from 'react';
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { Send, ArrowDown, Trash2, Sparkles } from 'lucide-react';
+import { Send, ArrowDown, Trash2, Sparkles, LogIn } from 'lucide-react';
 import { useChat } from '@/contexts/ChatContext';
+import { useAuth } from '@/contexts/AuthContext';
 import MessageBubble from './MessageBubble';
 import AnimatedTransition from './AnimatedTransition';
+import { useNavigate } from 'react-router-dom';
 
 interface ChatInterfaceProps {
   className?: string;
@@ -14,11 +16,13 @@ interface ChatInterfaceProps {
 
 const ChatInterface: React.FC<ChatInterfaceProps> = ({ className }) => {
   const { messages, isTyping, sendMessage, clearChat } = useChat();
+  const { isLoggedIn } = useAuth();
   const [messageInput, setMessageInput] = useState('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [showScrollButton, setShowScrollButton] = useState(false);
   const chatContainerRef = useRef<HTMLDivElement>(null);
   const messageInputRef = useRef<HTMLTextAreaElement>(null);
+  const navigate = useNavigate();
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -59,6 +63,28 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ className }) => {
       handleSubmit(e);
     }
   };
+
+  if (!isLoggedIn) {
+    return (
+      <div className={cn(
+        "flex flex-col items-center justify-center h-full p-8 text-center space-y-4 glass-panel rounded-2xl",
+        className
+      )}>
+        <Sparkles className="h-12 w-12 text-primary/50" />
+        <h3 className="text-xl font-medium">Login to Access Chat Assistant</h3>
+        <p className="text-muted-foreground">
+          Please login to use our AI career assistant and get personalized guidance.
+        </p>
+        <Button 
+          onClick={() => navigate('/login')}
+          className="mt-4"
+        >
+          <LogIn className="mr-2 h-4 w-4" />
+          Login Now
+        </Button>
+      </div>
+    );
+  }
 
   return (
     <div className={cn(

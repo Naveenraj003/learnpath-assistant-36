@@ -12,29 +12,34 @@ import CoursesPage from "./pages/CoursesPage";
 import CollegesPage from "./pages/CollegesPage";
 import CareersPage from "./pages/CareersPage";
 import CollegeDetailsPage from "./pages/CollegeDetailsPage";
+import LoginPage from "./pages/LoginPage";
 import ThreeDBackground from "./components/ThreeDBackground";
+import { AuthProvider } from "./contexts/AuthContext";
 
 const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-      <TooltipProvider>
-        <ThreeDBackground />
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/about" element={<About />} />
-            <Route path="/courses" element={<CoursesPage />} />
-            <Route path="/colleges" element={<CollegesPage />} />
-            <Route path="/colleges/:collegeName" element={<CollegeDetailsPage />} />
-            <Route path="/careers" element={<CareersPage />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </BrowserRouter>
-      </TooltipProvider>
+      <AuthProvider>
+        <TooltipProvider>
+          <ThreeDBackground />
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <Routes>
+              <Route path="/" element={<Index />} />
+              <Route path="/about" element={<About />} />
+              <Route path="/courses" element={<CoursesPage />} />
+              <Route path="/colleges" element={<CollegesPage />} />
+              <Route path="/colleges/:collegeName" element={<CollegeDetailsPage />} />
+              <Route path="/careers" element={<CareersPage />} />
+              <Route path="/login" element={<LoginPage />} />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </BrowserRouter>
+        </TooltipProvider>
+      </AuthProvider>
     </ThemeProvider>
   </QueryClientProvider>
 );

@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { cn } from "@/lib/utils";
 import { ModeToggle } from "@/components/ui/mode-toggle";
 import { 
@@ -9,7 +9,8 @@ import {
   X,
   BookOpen, 
   Building, 
-  BriefcaseIcon 
+  BriefcaseIcon,
+  LogIn
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
@@ -20,6 +21,7 @@ interface HeaderProps {
 
 const Header = ({ className }: HeaderProps) => {
   const [isOpen, setIsOpen] = useState(false);
+  const navigate = useNavigate();
   
   const menuItems = [
     { path: '/', label: 'Home', icon: null },
@@ -29,11 +31,15 @@ const Header = ({ className }: HeaderProps) => {
     { path: '/about', label: 'About', icon: null }
   ];
 
+  const handleLogin = () => {
+    navigate('/login');
+  };
+
   return (
     <header className={cn("w-full py-4 px-6 flex items-center justify-between bg-background/60 backdrop-blur-md border-b", className)}>
       <Link to="/" className="flex items-center gap-2">
         <GraduationCap className="h-6 w-6 text-primary" />
-        <span className="font-bold text-xl">EduPath India</span>
+        <span className="font-bold text-xl">Career Compass</span>
       </Link>
       
       <div className="flex items-center gap-4">
@@ -50,6 +56,16 @@ const Header = ({ className }: HeaderProps) => {
             </Link>
           ))}
         </nav>
+        
+        <Button 
+          variant="outline" 
+          size="sm" 
+          onClick={handleLogin}
+          className="hidden md:flex items-center gap-1"
+        >
+          <LogIn className="h-4 w-4" />
+          <span>Login</span>
+        </Button>
         
         <ModeToggle />
         
@@ -74,6 +90,17 @@ const Header = ({ className }: HeaderProps) => {
                   <span>{item.label}</span>
                 </Link>
               ))}
+              <Button 
+                variant="outline"
+                onClick={() => {
+                  handleLogin();
+                  setIsOpen(false);
+                }}
+                className="flex items-center gap-2"
+              >
+                <LogIn className="h-4 w-4" />
+                <span>Login</span>
+              </Button>
             </div>
           </SheetContent>
         </Sheet>

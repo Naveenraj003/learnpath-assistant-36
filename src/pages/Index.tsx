@@ -1,16 +1,19 @@
 
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
-import { Link } from "react-router-dom";
-import { BriefcaseIcon, BookOpen, Building, GraduationCap, ChevronDown } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
+import { BriefcaseIcon, BookOpen, Building, GraduationCap, ChevronDown, LogIn } from "lucide-react";
 import Header from '@/components/Header';
 import AnimatedTransition from '@/components/AnimatedTransition';
 import ChatInterface from '@/components/ChatInterface';
 import { ChatProvider, useChat } from '@/contexts/ChatContext';
+import { useAuth } from '@/contexts/AuthContext';
 import CoursesModal from '@/components/CoursesModal';
 
 const HeroSection = () => {
   const { sendMessage } = useChat();
+  const { isLoggedIn } = useAuth();
+  const navigate = useNavigate();
   const [isCoursesModalOpen, setIsCoursesModalOpen] = useState(false);
   const [modalType, setModalType] = useState<'courses' | 'colleges'>('courses');
   
@@ -30,11 +33,22 @@ const HeroSection = () => {
         <AnimatedTransition>
           <div className="text-center mb-8">
             <h1 className="text-4xl md:text-6xl font-bold mb-4 tracking-tighter">
-              Find Your Perfect <span className="text-primary">Educational Path</span> in India
+              Find Your Perfect <span className="text-primary">Career Path</span> in India
             </h1>
             <p className="text-lg text-muted-foreground max-w-3xl mx-auto mb-8">
               Discover the best courses, colleges, and career opportunities with personalized AI guidance.
             </p>
+            
+            {!isLoggedIn && (
+              <Button 
+                size="lg" 
+                onClick={() => navigate('/login')}
+                className="mb-4"
+              >
+                <LogIn className="mr-2 h-4 w-4" />
+                Get Started
+              </Button>
+            )}
           </div>
         </AnimatedTransition>
         
@@ -94,7 +108,7 @@ const HeroSection = () => {
         
         <AnimatedTransition showDelay={200}>
           <div className="w-full max-w-4xl glass-panel p-6 rounded-xl mb-12">
-            <h2 className="text-2xl font-semibold mb-6">AI Education Assistant</h2>
+            <h2 className="text-2xl font-semibold mb-6">AI Career Assistant</h2>
             <ChatInterface />
           </div>
         </AnimatedTransition>
@@ -231,7 +245,7 @@ const Index = () => {
             </div>
             
             <div className="mt-8 pt-8 border-t text-center text-sm text-muted-foreground">
-              <p>© {new Date().getFullYear()} EduPathfinder. All rights reserved.</p>
+              <p>© {new Date().getFullYear()} Career Compass. All rights reserved.</p>
             </div>
           </div>
         </footer>
