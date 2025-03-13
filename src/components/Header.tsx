@@ -10,7 +10,8 @@ import {
   BookOpen, 
   Building, 
   BriefcaseIcon,
-  LogIn
+  LogIn,
+  User
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
@@ -24,7 +25,7 @@ interface HeaderProps {
 const Header = ({ className }: HeaderProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate();
-  const { isLoggedIn, logout } = useAuth();
+  const { isLoggedIn, logout, userData } = useAuth();
   
   const menuItems = [
     { path: '/', label: 'Home', icon: null },
@@ -67,15 +68,21 @@ const Header = ({ className }: HeaderProps) => {
         </nav>
         
         {isLoggedIn ? (
-          <Button 
-            variant="outline" 
-            size="sm" 
-            onClick={handleLogout}
-            className="hidden md:flex items-center gap-1 hover:bg-red-50 hover:text-red-500 hover:border-red-200 dark:hover:bg-red-950 dark:hover:text-red-400 dark:hover:border-red-800 transition-all hover:shadow-md active:scale-95"
-          >
-            <LogOut className="h-4 w-4" />
-            <span>Logout</span>
-          </Button>
+          <div className="hidden md:flex items-center gap-3">
+            <div className="text-sm font-medium flex items-center gap-1">
+              <User className="h-4 w-4 text-primary" />
+              <span>{userData?.name}</span>
+            </div>
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={handleLogout}
+              className="hidden md:flex items-center gap-1 hover:bg-red-50 hover:text-red-500 hover:border-red-200 dark:hover:bg-red-950 dark:hover:text-red-400 dark:hover:border-red-800 transition-all hover:shadow-md active:scale-95"
+            >
+              <LogOut className="h-4 w-4" />
+              <span>Logout</span>
+            </Button>
+          </div>
         ) : (
           <Button 
             variant="outline" 
@@ -111,18 +118,25 @@ const Header = ({ className }: HeaderProps) => {
                   <span>{item.label}</span>
                 </Link>
               ))}
+              
               {isLoggedIn ? (
-                <Button 
-                  variant="outline"
-                  onClick={() => {
-                    handleLogout();
-                    setIsOpen(false);
-                  }}
-                  className="flex items-center gap-2 hover:bg-red-50 hover:text-red-500 hover:border-red-200 dark:hover:bg-red-950 dark:hover:text-red-400 dark:hover:border-red-800 transition-all hover:shadow-md active:scale-95"
-                >
-                  <LogOut className="h-4 w-4" />
-                  <span>Logout</span>
-                </Button>
+                <>
+                  <div className="text-lg font-medium flex items-center gap-2 border-t pt-4">
+                    <User className="h-5 w-5 text-primary" />
+                    <span>{userData?.name}</span>
+                  </div>
+                  <Button 
+                    variant="outline"
+                    onClick={() => {
+                      handleLogout();
+                      setIsOpen(false);
+                    }}
+                    className="flex items-center gap-2 hover:bg-red-50 hover:text-red-500 hover:border-red-200 dark:hover:bg-red-950 dark:hover:text-red-400 dark:hover:border-red-800 transition-all hover:shadow-md active:scale-95"
+                  >
+                    <LogOut className="h-4 w-4" />
+                    <span>Logout</span>
+                  </Button>
+                </>
               ) : (
                 <Button 
                   variant="outline"

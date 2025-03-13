@@ -8,8 +8,6 @@ interface UserData {
   currentInstitution: string;
   state: string;
   city: string;
-  interests: string;
-  careerGoals: string;
 }
 
 interface AuthContextType {
@@ -65,18 +63,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     // Validate required fields and email format
     if (!data.name || !data.email || !data.educationLevel || !data.state) {
       console.error("Missing required fields");
-      return;
+      return false;
     }
     
     if (!validateEmail(data.email)) {
       console.error("Invalid email format");
-      return;
+      return false;
     }
     
     localStorage.setItem('userLoggedIn', 'true');
     localStorage.setItem('userData', JSON.stringify(data));
     setIsLoggedIn(true);
     setUserData(data);
+    return true;
   };
 
   const logout = () => {

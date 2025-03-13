@@ -6,10 +6,9 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
-import { GraduationCap, User, MapPin, BookOpen, Home } from 'lucide-react';
+import { GraduationCap, User, MapPin, Home } from 'lucide-react';
 import AnimatedTransition from '@/components/AnimatedTransition';
 import { useAuth } from '@/contexts/AuthContext';
 
@@ -42,8 +41,6 @@ const LoginPage = () => {
     currentInstitution: '',
     state: '',
     city: '',
-    interests: '',
-    careerGoals: '',
   });
   const [errors, setErrors] = useState({
     name: '',
@@ -158,12 +155,15 @@ const LoginPage = () => {
     }
     
     // Call the login function from AuthContext
-    login(formData);
+    const loginSuccess = login(formData);
     
-    toast.success("Login successful! Welcome to Career Compass");
-    
-    // Redirect to home page
-    navigate('/');
+    if (loginSuccess) {
+      toast.success("Login successful! Welcome to Career Compass");
+      // Redirect to home page
+      navigate('/');
+    } else {
+      toast.error("Login failed. Please check your information.");
+    }
   };
 
   const renderForm = () => {
@@ -304,39 +304,6 @@ const LoginPage = () => {
           </AnimatedTransition>
         );
         
-      case 4:
-        return (
-          <AnimatedTransition>
-            <div className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="interests">Areas of Interest</Label>
-                <Textarea
-                  id="interests"
-                  name="interests"
-                  placeholder="E.g., Computer Science, Medicine, Business..."
-                  value={formData.interests}
-                  onChange={handleChange}
-                  rows={3}
-                  className="hover:shadow-md focus:shadow-md active:scale-[1.01] transition-all"
-                />
-              </div>
-              
-              <div className="space-y-2">
-                <Label htmlFor="careerGoals">Career Goals</Label>
-                <Textarea
-                  id="careerGoals"
-                  name="careerGoals"
-                  placeholder="What are your career aspirations?"
-                  value={formData.careerGoals}
-                  onChange={handleChange}
-                  rows={3}
-                  className="hover:shadow-md focus:shadow-md active:scale-[1.01] transition-all"
-                />
-              </div>
-            </div>
-          </AnimatedTransition>
-        );
-        
       default:
         return null;
     }
@@ -355,20 +322,17 @@ const LoginPage = () => {
                   {currentStep === 1 && <User className="h-8 w-8 text-primary" />}
                   {currentStep === 2 && <GraduationCap className="h-8 w-8 text-primary" />}
                   {currentStep === 3 && <MapPin className="h-8 w-8 text-primary" />}
-                  {currentStep === 4 && <BookOpen className="h-8 w-8 text-primary" />}
                 </div>
               </div>
               <CardTitle className="text-xl text-center">
                 {currentStep === 1 && "Welcome to Career Compass"}
                 {currentStep === 2 && "Educational Background"}
                 {currentStep === 3 && "Your Location"}
-                {currentStep === 4 && "Interests & Goals"}
               </CardTitle>
               <CardDescription className="text-center">
                 {currentStep === 1 && "Let's get to know you better"}
                 {currentStep === 2 && "Tell us about your education"}
                 {currentStep === 3 && "Where are you located?"}
-                {currentStep === 4 && "Help us personalize your experience"}
               </CardDescription>
             </CardHeader>
             
@@ -379,7 +343,7 @@ const LoginPage = () => {
               
               <div className="mt-6 flex justify-between items-center">
                 <div className="flex gap-1">
-                  {[1, 2, 3, 4].map((step) => (
+                  {[1, 2, 3].map((step) => (
                     <div
                       key={step}
                       className={`w-2 h-2 rounded-full ${
@@ -394,7 +358,7 @@ const LoginPage = () => {
                 </div>
                 
                 <div className="text-sm text-muted-foreground">
-                  Step {currentStep} of 4
+                  Step {currentStep} of 3
                 </div>
               </div>
             </CardContent>
@@ -421,7 +385,7 @@ const LoginPage = () => {
                 </Button>
               )}
               
-              {currentStep < 4 ? (
+              {currentStep < 3 ? (
                 <Button 
                   onClick={handleNext} 
                   type="button"

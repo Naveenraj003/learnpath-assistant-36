@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Link, useNavigate } from "react-router-dom";
-import { BriefcaseIcon, BookOpen, Building, GraduationCap, ChevronDown, LogIn } from "lucide-react";
+import { BriefcaseIcon, BookOpen, Building, GraduationCap, ChevronDown, LogIn, AlertCircle } from "lucide-react";
 import Header from '@/components/Header';
 import AnimatedTransition from '@/components/AnimatedTransition';
 import ChatInterface from '@/components/ChatInterface';
@@ -26,6 +26,12 @@ const HeroSection = () => {
     setModalType('colleges');
     setIsCoursesModalOpen(true);
   };
+
+  const handleChatAccess = () => {
+    if (!isLoggedIn) {
+      navigate('/login');
+    }
+  };
   
   return (
     <section className="relative min-h-screen flex items-center px-4 overflow-hidden">
@@ -43,7 +49,7 @@ const HeroSection = () => {
               <Button 
                 size="lg" 
                 onClick={() => navigate('/login')}
-                className="mb-4"
+                className="mb-4 hover:bg-primary/90 hover:shadow-md active:scale-95 transition-all"
               >
                 <LogIn className="mr-2 h-4 w-4" />
                 Get Started
@@ -54,26 +60,26 @@ const HeroSection = () => {
         
         <AnimatedTransition showDelay={100}>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12 w-full max-w-4xl">
-            <div className="glass-panel p-6 rounded-xl">
+            <div className="glass-panel p-6 rounded-xl hover:shadow-lg transition-all">
               <h2 className="text-2xl font-semibold mb-4">Education Explorer</h2>
               <p className="text-muted-foreground mb-4">
                 Navigate your educational journey with our AI-powered tools.
               </p>
               
               <div className="grid grid-cols-3 gap-2">
-                <Button asChild variant="outline" size="sm" className="w-full">
+                <Button asChild variant="outline" size="sm" className="w-full hover:bg-primary/10 hover:text-primary hover:shadow-md active:scale-95 transition-all">
                   <Link to="/courses">
                     <BookOpen className="mr-1 h-4 w-4" />
                     Courses
                   </Link>
                 </Button>
-                <Button asChild variant="outline" size="sm" className="w-full">
+                <Button asChild variant="outline" size="sm" className="w-full hover:bg-primary/10 hover:text-primary hover:shadow-md active:scale-95 transition-all">
                   <Link to="/colleges">
                     <Building className="mr-1 h-4 w-4" />
                     Colleges
                   </Link>
                 </Button>
-                <Button asChild variant="outline" size="sm" className="w-full">
+                <Button asChild variant="outline" size="sm" className="w-full hover:bg-primary/10 hover:text-primary hover:shadow-md active:scale-95 transition-all">
                   <Link to="/careers">
                     <BriefcaseIcon className="mr-1 h-4 w-4" />
                     Careers
@@ -82,7 +88,7 @@ const HeroSection = () => {
               </div>
             </div>
             
-            <div className="glass-panel p-6 rounded-xl">
+            <div className="glass-panel p-6 rounded-xl hover:shadow-lg transition-all">
               <h2 className="text-2xl font-semibold mb-4">Education Stats</h2>
               <p className="text-muted-foreground mb-4">
                 Key statistics on higher education in India.
@@ -107,14 +113,33 @@ const HeroSection = () => {
         </AnimatedTransition>
         
         <AnimatedTransition showDelay={200}>
-          <div className="w-full max-w-4xl glass-panel p-6 rounded-xl mb-12">
+          <div className="w-full max-w-4xl glass-panel p-6 rounded-xl mb-12 hover:shadow-lg transition-all">
             <h2 className="text-2xl font-semibold mb-6">AI Career Assistant</h2>
-            <ChatInterface />
+            
+            {isLoggedIn ? (
+              <ChatInterface />
+            ) : (
+              <div className="flex flex-col items-center justify-center py-10 text-center">
+                <AlertCircle className="h-12 w-12 text-primary mb-4" />
+                <h3 className="text-xl font-medium mb-2">Login Required</h3>
+                <p className="text-muted-foreground max-w-md mb-6">
+                  You need to be logged in to access the AI Career Assistant.
+                  Create an account or log in to continue.
+                </p>
+                <Button 
+                  onClick={() => navigate('/login')}
+                  className="hover:bg-primary/90 hover:shadow-md active:scale-95 transition-all"
+                >
+                  <LogIn className="mr-2 h-4 w-4" />
+                  Login to Chat
+                </Button>
+              </div>
+            )}
           </div>
         </AnimatedTransition>
         
         <div className="absolute bottom-6 left-1/2 -translate-x-1/2 animate-bounce">
-          <Button variant="outline" size="sm" className="rounded-full glass-panel">
+          <Button variant="outline" size="sm" className="rounded-full glass-panel hover:shadow-lg active:scale-95 transition-all">
             <span className="text-xs">Explore More</span>
             <ChevronDown className="h-5 w-5" />
           </Button>
@@ -263,7 +288,7 @@ interface StatProps {
 
 const Stat: React.FC<StatProps> = ({ icon, value, label, onClick }) => (
   <div 
-    className={`flex flex-col items-center glass-panel p-3 rounded-lg ${onClick ? 'cursor-pointer hover:bg-accent/30 hover:shadow-md transition-all' : ''}`}
+    className={`flex flex-col items-center glass-panel p-3 rounded-lg ${onClick ? 'cursor-pointer hover:bg-accent/30 hover:shadow-md transition-all active:scale-95' : ''}`}
     onClick={onClick}
     role={onClick ? "button" : undefined}
   >
