@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from '@/components/Header';
@@ -90,7 +91,7 @@ const CollegesPage = () => {
           
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
             <div className="lg:col-span-1">
-              <Card className="glass-panel">
+              <Card className="glass-panel hover:shadow-lg transition-all duration-300">
                 <CardHeader>
                   <CardTitle className="text-xl">Filters</CardTitle>
                   <CardDescription>Refine your college search</CardDescription>
@@ -105,7 +106,7 @@ const CollegesPage = () => {
                         placeholder="Search colleges..."
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
-                        className="pl-10 glass-input"
+                        className="pl-10 glass-input active:scale-[1.01] focus:scale-[1.01] transition-all"
                       />
                     </div>
                   </div>
@@ -120,7 +121,7 @@ const CollegesPage = () => {
                         setDistrictFilter('all');
                       }}
                     >
-                      <SelectTrigger className="glass-input">
+                      <SelectTrigger className="glass-input active:scale-[1.01] hover:shadow-md transition-all">
                         <SelectValue placeholder="Select country" />
                       </SelectTrigger>
                       <SelectContent>
@@ -141,7 +142,7 @@ const CollegesPage = () => {
                         setDistrictFilter('all');
                       }}
                     >
-                      <SelectTrigger className="glass-input">
+                      <SelectTrigger className="glass-input active:scale-[1.01] hover:shadow-md transition-all">
                         <SelectValue placeholder="Select state" />
                       </SelectTrigger>
                       <SelectContent>
@@ -158,10 +159,9 @@ const CollegesPage = () => {
                     <Select
                       value={districtFilter}
                       onValueChange={setDistrictFilter}
-                      disabled={stateFilter === 'all'}
                     >
-                      <SelectTrigger className="glass-input">
-                        <SelectValue placeholder={stateFilter === 'all' ? "Select state first" : "Select district"} />
+                      <SelectTrigger className="glass-input active:scale-[1.01] hover:shadow-md transition-all">
+                        <SelectValue placeholder="Select district" />
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="all">All Districts</SelectItem>
@@ -174,7 +174,7 @@ const CollegesPage = () => {
                   
                   <Button 
                     variant="outline" 
-                    className="w-full"
+                    className="w-full hover:bg-primary/10 hover:text-primary hover:shadow-md active:scale-[0.98] transition-all"
                     onClick={() => {
                       setSearchTerm('');
                       setCountryFilter('all');
@@ -207,13 +207,14 @@ const CollegesPage = () => {
                         setStateFilter('all');
                         setDistrictFilter('all');
                       }}
+                      className="hover:bg-primary/10 hover:text-primary hover:shadow-md active:scale-[0.98] transition-all"
                     >
                       Reset Filters
                     </Button>
                   </div>
                 ) : (
                   filteredColleges.map((college, index) => (
-                    <Card key={index} className="h-full cursor-pointer hover:border-primary transition-colors">
+                    <Card key={index} className="h-full cursor-pointer hover:border-primary transition-colors hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
                       <CardHeader className="pb-2">
                         <div className="flex justify-between items-start mb-2">
                           <Badge variant="outline" className="bg-primary/10 text-primary border-primary/20">
@@ -237,7 +238,7 @@ const CollegesPage = () => {
                       <CardFooter>
                         <Button 
                           size="sm" 
-                          className="w-full" 
+                          className="w-full hover:bg-primary/90 hover:shadow-md active:scale-[0.98] transition-all" 
                           variant="outline"
                           onClick={() => handleViewDetails(college)}
                         >

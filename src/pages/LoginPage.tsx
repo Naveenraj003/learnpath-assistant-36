@@ -11,6 +11,7 @@ import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { GraduationCap, User, MapPin, BookOpen, Home } from 'lucide-react';
 import AnimatedTransition from '@/components/AnimatedTransition';
+import { useAuth } from '@/contexts/AuthContext';
 
 const educationLevels = [
   "10th Standard",
@@ -32,6 +33,7 @@ const states = [
 
 const LoginPage = () => {
   const navigate = useNavigate();
+  const { login } = useAuth();
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState({
     name: '',
@@ -82,9 +84,8 @@ const LoginPage = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Save user data to localStorage
-    localStorage.setItem('userLoggedIn', 'true');
-    localStorage.setItem('userData', JSON.stringify(formData));
+    // Call the login function from AuthContext
+    login(formData);
     
     toast.success("Login successful! Welcome to Career Compass");
     
@@ -106,6 +107,7 @@ const LoginPage = () => {
                   placeholder="Enter your full name"
                   value={formData.name}
                   onChange={handleChange}
+                  className="hover:shadow-md focus:shadow-md active:scale-[1.01] transition-all"
                   required
                 />
               </div>
@@ -119,6 +121,7 @@ const LoginPage = () => {
                   placeholder="you@example.com"
                   value={formData.email}
                   onChange={handleChange}
+                  className="hover:shadow-md focus:shadow-md active:scale-[1.01] transition-all"
                   required
                 />
               </div>
@@ -136,7 +139,7 @@ const LoginPage = () => {
                   value={formData.educationLevel}
                   onValueChange={(value) => handleSelectChange('educationLevel', value)}
                 >
-                  <SelectTrigger id="educationLevel" className="w-full">
+                  <SelectTrigger id="educationLevel" className="w-full hover:shadow-md active:scale-[1.01] transition-all">
                     <SelectValue placeholder="Select your education level" />
                   </SelectTrigger>
                   <SelectContent>
@@ -155,6 +158,7 @@ const LoginPage = () => {
                   placeholder="Name of your institution"
                   value={formData.currentInstitution}
                   onChange={handleChange}
+                  className="hover:shadow-md focus:shadow-md active:scale-[1.01] transition-all"
                 />
               </div>
             </div>
@@ -171,7 +175,7 @@ const LoginPage = () => {
                   value={formData.state}
                   onValueChange={(value) => handleSelectChange('state', value)}
                 >
-                  <SelectTrigger id="state" className="w-full">
+                  <SelectTrigger id="state" className="w-full hover:shadow-md active:scale-[1.01] transition-all">
                     <SelectValue placeholder="Select your state" />
                   </SelectTrigger>
                   <SelectContent>
@@ -190,6 +194,7 @@ const LoginPage = () => {
                   placeholder="Your city or district"
                   value={formData.city}
                   onChange={handleChange}
+                  className="hover:shadow-md focus:shadow-md active:scale-[1.01] transition-all"
                 />
               </div>
             </div>
@@ -209,6 +214,7 @@ const LoginPage = () => {
                   value={formData.interests}
                   onChange={handleChange}
                   rows={3}
+                  className="hover:shadow-md focus:shadow-md active:scale-[1.01] transition-all"
                 />
               </div>
               
@@ -221,6 +227,7 @@ const LoginPage = () => {
                   value={formData.careerGoals}
                   onChange={handleChange}
                   rows={3}
+                  className="hover:shadow-md focus:shadow-md active:scale-[1.01] transition-all"
                 />
               </div>
             </div>
@@ -238,7 +245,7 @@ const LoginPage = () => {
       
       <main className="container mx-auto py-8 px-4 max-w-md">
         <AnimatedTransition>
-          <Card className="glass-panel">
+          <Card className="glass-panel hover:shadow-lg transition-all duration-300">
             <CardHeader>
               <div className="flex justify-center mb-4">
                 <div className="w-16 h-16 flex items-center justify-center rounded-full bg-primary/10">
@@ -291,22 +298,40 @@ const LoginPage = () => {
             
             <CardFooter className="flex justify-between">
               {currentStep > 1 ? (
-                <Button variant="outline" onClick={handleBack} type="button">
+                <Button 
+                  variant="outline" 
+                  onClick={handleBack} 
+                  type="button"
+                  className="hover:bg-primary/10 hover:text-primary hover:shadow-md active:scale-[0.98] transition-all"
+                >
                   Back
                 </Button>
               ) : (
-                <Button variant="outline" onClick={() => navigate('/')} type="button">
+                <Button 
+                  variant="outline" 
+                  onClick={() => navigate('/')} 
+                  type="button"
+                  className="hover:bg-primary/10 hover:text-primary hover:shadow-md active:scale-[0.98] transition-all"
+                >
                   <Home className="mr-2 h-4 w-4" />
                   Home
                 </Button>
               )}
               
               {currentStep < 4 ? (
-                <Button onClick={handleNext} type="button">
+                <Button 
+                  onClick={handleNext} 
+                  type="button"
+                  className="hover:bg-primary/90 hover:shadow-md active:scale-[0.98] transition-all"
+                >
                   Next
                 </Button>
               ) : (
-                <Button onClick={handleSubmit} type="submit">
+                <Button 
+                  onClick={handleSubmit} 
+                  type="submit"
+                  className="hover:bg-primary/90 hover:shadow-md active:scale-[0.98] transition-all"
+                >
                   Complete
                 </Button>
               )}

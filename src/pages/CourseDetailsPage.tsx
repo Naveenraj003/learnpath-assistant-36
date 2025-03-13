@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Header from '@/components/Header';
@@ -5,7 +6,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { BookOpen, BriefcaseIcon, Building, DollarSign, TrendingUp, Award } from 'lucide-react';
+import { BookOpen, BriefcaseIcon, Building, DollarSign, TrendingUp, Award, ArrowLeft } from 'lucide-react';
 import { coursesData, Course } from '@/data/coursesData';
 import AnimatedTransition from '@/components/AnimatedTransition';
 
@@ -46,13 +47,13 @@ const CourseDetailsPage = () => {
           <Button 
             variant="outline" 
             onClick={() => navigate('/courses')} 
-            className="mb-6"
+            className="mb-6 hover:bg-primary/10 hover:text-primary hover:shadow-md active:scale-[0.98] transition-all group"
           >
-            ← Back to Courses
+            <ArrowLeft className="mr-1 h-4 w-4 group-hover:-translate-x-1 transition-transform" /> Back to Courses
           </Button>
           
           <div className="max-w-4xl mx-auto">
-            <Card className="border-primary/20 shadow-lg animate-fade-in overflow-hidden mb-6">
+            <Card className="border-primary/20 shadow-lg animate-fade-in overflow-hidden mb-6 hover:shadow-xl transition-all">
               <CardHeader className="bg-gradient-to-r from-primary/10 to-blue-500/10">
                 <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-4">
                   <div>
@@ -71,14 +72,28 @@ const CourseDetailsPage = () => {
               </CardHeader>
             </Card>
             
-            <Card className="border-primary/20 shadow-lg animate-fade-in overflow-hidden">
+            <Card className="border-primary/20 shadow-lg animate-fade-in overflow-hidden hover:shadow-xl transition-all">
               <CardContent className="pt-6">
                 <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
                   <TabsList className="w-full justify-start mb-6 bg-muted/50">
-                    <TabsTrigger value="overview">Overview</TabsTrigger>
-                    <TabsTrigger value="future">Future Scope</TabsTrigger>
-                    <TabsTrigger value="jobs">Job Opportunities</TabsTrigger>
-                    <TabsTrigger value="colleges">Top Colleges</TabsTrigger>
+                    <TabsTrigger 
+                      value="overview" 
+                      className="data-[state=active]:bg-primary/20 data-[state=active]:text-primary hover:bg-muted/80 transition-all"
+                    >
+                      Overview
+                    </TabsTrigger>
+                    <TabsTrigger 
+                      value="jobs" 
+                      className="data-[state=active]:bg-primary/20 data-[state=active]:text-primary hover:bg-muted/80 transition-all"
+                    >
+                      Job Opportunities
+                    </TabsTrigger>
+                    <TabsTrigger 
+                      value="colleges" 
+                      className="data-[state=active]:bg-primary/20 data-[state=active]:text-primary hover:bg-muted/80 transition-all"
+                    >
+                      Top Colleges
+                    </TabsTrigger>
                   </TabsList>
                   
                   <TabsContent value="overview" className="mt-0">
@@ -88,16 +103,16 @@ const CourseDetailsPage = () => {
                           <BookOpen className="h-4 w-4 text-primary" />
                           Course Details
                         </h3>
-                        <div className="space-y-2 bg-muted/10 p-4 rounded-lg border border-border">
-                          <div className="flex items-center gap-8">
+                        <div className="space-y-2 bg-muted/10 p-4 rounded-lg border border-border hover:shadow-md transition-all">
+                          <div className="flex gap-8">
                             <span className="text-muted-foreground min-w-24">Level:</span>
                             <span>{course.level}</span>
                           </div>
-                          <div className="flex items-center gap-8">
+                          <div className="flex gap-8">
                             <span className="text-muted-foreground min-w-24">Field:</span>
                             <span>{course.field}</span>
                           </div>
-                          <div className="flex items-center gap-8">
+                          <div className="flex gap-8">
                             <span className="text-muted-foreground min-w-24">Duration:</span>
                             <span>{course.duration}</span>
                           </div>
@@ -109,7 +124,7 @@ const CourseDetailsPage = () => {
                           <BriefcaseIcon className="h-4 w-4 text-primary" />
                           Career Prospects
                         </h3>
-                        <ul className="space-y-1 bg-muted/10 p-4 rounded-lg border border-border">
+                        <ul className="space-y-1 bg-muted/10 p-4 rounded-lg border border-border hover:shadow-md transition-all">
                           {course.careerProspects.map((career, index) => (
                             <li key={index} className="flex items-center gap-2">
                               <div className="w-1.5 h-1.5 rounded-full bg-primary"></div>
@@ -121,85 +136,6 @@ const CourseDetailsPage = () => {
                     </div>
                   </TabsContent>
                   
-                  <TabsContent value="future" className="mt-0">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      <div>
-                        <h3 className="text-lg font-semibold mb-3 flex items-center gap-2">
-                          <TrendingUp className="h-4 w-4 text-primary" />
-                          Growth Potential
-                        </h3>
-                        <Card className="bg-muted/30 border-primary/10 h-full">
-                          <CardContent className="p-4">
-                            <p className="mb-3">The {course.field} industry is experiencing rapid growth, especially in specialized areas of {course.name}. Professionals with this qualification can expect:</p>
-                            <ul className="space-y-2">
-                              <li className="flex items-start gap-2">
-                                <div className="w-1.5 h-1.5 rounded-full bg-primary mt-2"></div>
-                                <span>Increasing demand across both established companies and startups</span>
-                              </li>
-                              <li className="flex items-start gap-2">
-                                <div className="w-1.5 h-1.5 rounded-full bg-primary mt-2"></div>
-                                <span>Opportunities for international careers and remote work</span>
-                              </li>
-                              <li className="flex items-start gap-2">
-                                <div className="w-1.5 h-1.5 rounded-full bg-primary mt-2"></div>
-                                <span>Potential for entrepreneurship and innovation in the field</span>
-                              </li>
-                              <li className="flex items-start gap-2">
-                                <div className="w-1.5 h-1.5 rounded-full bg-primary mt-2"></div>
-                                <span>Expanding roles with the adoption of new technologies</span>
-                              </li>
-                            </ul>
-                          </CardContent>
-                        </Card>
-                      </div>
-                      
-                      <div>
-                        <h3 className="text-lg font-semibold mb-3 flex items-center gap-2">
-                          <Award className="h-4 w-4 text-primary" />
-                          Further Education
-                        </h3>
-                        <Card className="bg-muted/30 border-primary/10 h-full">
-                          <CardContent className="p-4">
-                            <p className="mb-3">After completing {course.name}, students can pursue various advanced education paths:</p>
-                            <ul className="space-y-2">
-                              {course.level === 'undergraduate' ? (
-                                <>
-                                  <li className="flex items-start gap-2">
-                                    <div className="w-1.5 h-1.5 rounded-full bg-primary mt-2"></div>
-                                    <span>Masters programs in specialized areas of {course.field}</span>
-                                  </li>
-                                  <li className="flex items-start gap-2">
-                                    <div className="w-1.5 h-1.5 rounded-full bg-primary mt-2"></div>
-                                    <span>Professional certifications to enhance technical skills</span>
-                                  </li>
-                                  <li className="flex items-start gap-2">
-                                    <div className="w-1.5 h-1.5 rounded-full bg-primary mt-2"></div>
-                                    <span>Research opportunities in emerging fields</span>
-                                  </li>
-                                </>
-                              ) : (
-                                <>
-                                  <li className="flex items-start gap-2">
-                                    <div className="w-1.5 h-1.5 rounded-full bg-primary mt-2"></div>
-                                    <span>Doctoral programs for academic and research careers</span>
-                                  </li>
-                                  <li className="flex items-start gap-2">
-                                    <div className="w-1.5 h-1.5 rounded-full bg-primary mt-2"></div>
-                                    <span>Executive education for leadership roles</span>
-                                  </li>
-                                  <li className="flex items-start gap-2">
-                                    <div className="w-1.5 h-1.5 rounded-full bg-primary mt-2"></div>
-                                    <span>Interdisciplinary studies combining {course.field} with related fields</span>
-                                  </li>
-                                </>
-                              )}
-                            </ul>
-                          </CardContent>
-                        </Card>
-                      </div>
-                    </div>
-                  </TabsContent>
-                  
                   <TabsContent value="jobs" className="mt-0">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <div>
@@ -207,57 +143,57 @@ const CourseDetailsPage = () => {
                           <BriefcaseIcon className="h-4 w-4 text-primary" />
                           Top Companies Recruiting
                         </h3>
-                        <Card className="bg-muted/30 border-primary/10 h-full">
+                        <Card className="bg-muted/30 border-primary/10 h-full hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
                           <CardContent className="p-4">
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                               {course.field === 'engineering' && (
                                 <>
-                                  <Badge className="justify-start py-2 px-3">Google</Badge>
-                                  <Badge className="justify-start py-2 px-3">Microsoft</Badge>
-                                  <Badge className="justify-start py-2 px-3">Amazon</Badge>
-                                  <Badge className="justify-start py-2 px-3">Infosys</Badge>
-                                  <Badge className="justify-start py-2 px-3">TCS</Badge>
-                                  <Badge className="justify-start py-2 px-3">Wipro</Badge>
+                                  <Badge className="justify-start py-2 px-3 hover:bg-primary/20 transition-all">Google</Badge>
+                                  <Badge className="justify-start py-2 px-3 hover:bg-primary/20 transition-all">Microsoft</Badge>
+                                  <Badge className="justify-start py-2 px-3 hover:bg-primary/20 transition-all">Amazon</Badge>
+                                  <Badge className="justify-start py-2 px-3 hover:bg-primary/20 transition-all">Infosys</Badge>
+                                  <Badge className="justify-start py-2 px-3 hover:bg-primary/20 transition-all">TCS</Badge>
+                                  <Badge className="justify-start py-2 px-3 hover:bg-primary/20 transition-all">Wipro</Badge>
                                 </>
                               )}
                               {course.field === 'medicine' && (
                                 <>
-                                  <Badge className="justify-start py-2 px-3">Apollo Hospitals</Badge>
-                                  <Badge className="justify-start py-2 px-3">Fortis Healthcare</Badge>
-                                  <Badge className="justify-start py-2 px-3">Max Healthcare</Badge>
-                                  <Badge className="justify-start py-2 px-3">AIIMS</Badge>
-                                  <Badge className="justify-start py-2 px-3">Medanta</Badge>
-                                  <Badge className="justify-start py-2 px-3">Narayana Health</Badge>
+                                  <Badge className="justify-start py-2 px-3 hover:bg-primary/20 transition-all">Apollo Hospitals</Badge>
+                                  <Badge className="justify-start py-2 px-3 hover:bg-primary/20 transition-all">Fortis Healthcare</Badge>
+                                  <Badge className="justify-start py-2 px-3 hover:bg-primary/20 transition-all">Max Healthcare</Badge>
+                                  <Badge className="justify-start py-2 px-3 hover:bg-primary/20 transition-all">AIIMS</Badge>
+                                  <Badge className="justify-start py-2 px-3 hover:bg-primary/20 transition-all">Medanta</Badge>
+                                  <Badge className="justify-start py-2 px-3 hover:bg-primary/20 transition-all">Narayana Health</Badge>
                                 </>
                               )}
                               {course.field === 'business' && (
                                 <>
-                                  <Badge className="justify-start py-2 px-3">McKinsey</Badge>
-                                  <Badge className="justify-start py-2 px-3">BCG</Badge>
-                                  <Badge className="justify-start py-2 px-3">Goldman Sachs</Badge>
-                                  <Badge className="justify-start py-2 px-3">JP Morgan</Badge>
-                                  <Badge className="justify-start py-2 px-3">Deloitte</Badge>
-                                  <Badge className="justify-start py-2 px-3">KPMG</Badge>
+                                  <Badge className="justify-start py-2 px-3 hover:bg-primary/20 transition-all">McKinsey</Badge>
+                                  <Badge className="justify-start py-2 px-3 hover:bg-primary/20 transition-all">BCG</Badge>
+                                  <Badge className="justify-start py-2 px-3 hover:bg-primary/20 transition-all">Goldman Sachs</Badge>
+                                  <Badge className="justify-start py-2 px-3 hover:bg-primary/20 transition-all">JP Morgan</Badge>
+                                  <Badge className="justify-start py-2 px-3 hover:bg-primary/20 transition-all">Deloitte</Badge>
+                                  <Badge className="justify-start py-2 px-3 hover:bg-primary/20 transition-all">KPMG</Badge>
                                 </>
                               )}
                               {course.field === 'arts' && (
                                 <>
-                                  <Badge className="justify-start py-2 px-3">Adobe</Badge>
-                                  <Badge className="justify-start py-2 px-3">Google Design</Badge>
-                                  <Badge className="justify-start py-2 px-3">Microsoft Design</Badge>
-                                  <Badge className="justify-start py-2 px-3">Designit</Badge>
-                                  <Badge className="justify-start py-2 px-3">Ogilvy</Badge>
-                                  <Badge className="justify-start py-2 px-3">IDEO</Badge>
+                                  <Badge className="justify-start py-2 px-3 hover:bg-primary/20 transition-all">Adobe</Badge>
+                                  <Badge className="justify-start py-2 px-3 hover:bg-primary/20 transition-all">Google Design</Badge>
+                                  <Badge className="justify-start py-2 px-3 hover:bg-primary/20 transition-all">Microsoft Design</Badge>
+                                  <Badge className="justify-start py-2 px-3 hover:bg-primary/20 transition-all">Designit</Badge>
+                                  <Badge className="justify-start py-2 px-3 hover:bg-primary/20 transition-all">Ogilvy</Badge>
+                                  <Badge className="justify-start py-2 px-3 hover:bg-primary/20 transition-all">IDEO</Badge>
                                 </>
                               )}
                               {course.field === 'science' && (
                                 <>
-                                  <Badge className="justify-start py-2 px-3">ISRO</Badge>
-                                  <Badge className="justify-start py-2 px-3">DRDO</Badge>
-                                  <Badge className="justify-start py-2 px-3">BARC</Badge>
-                                  <Badge className="justify-start py-2 px-3">TIFR</Badge>
-                                  <Badge className="justify-start py-2 px-3">CSIR</Badge>
-                                  <Badge className="justify-start py-2 px-3">IISc</Badge>
+                                  <Badge className="justify-start py-2 px-3 hover:bg-primary/20 transition-all">ISRO</Badge>
+                                  <Badge className="justify-start py-2 px-3 hover:bg-primary/20 transition-all">DRDO</Badge>
+                                  <Badge className="justify-start py-2 px-3 hover:bg-primary/20 transition-all">BARC</Badge>
+                                  <Badge className="justify-start py-2 px-3 hover:bg-primary/20 transition-all">TIFR</Badge>
+                                  <Badge className="justify-start py-2 px-3 hover:bg-primary/20 transition-all">CSIR</Badge>
+                                  <Badge className="justify-start py-2 px-3 hover:bg-primary/20 transition-all">IISc</Badge>
                                 </>
                               )}
                             </div>
@@ -270,7 +206,7 @@ const CourseDetailsPage = () => {
                           <DollarSign className="h-4 w-4 text-primary" />
                           Salary Expectations
                         </h3>
-                        <Card className="bg-muted/30 border-primary/10 h-full">
+                        <Card className="bg-muted/30 border-primary/10 h-full hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
                           <CardContent className="p-4">
                             <div className="space-y-3">
                               <div>
@@ -324,7 +260,7 @@ const CourseDetailsPage = () => {
                   <TabsContent value="colleges" className="mt-0">
                     <div className="grid grid-cols-1 gap-4">
                       {course.topColleges.map((college, index) => (
-                        <Card key={index} className="hover:shadow-md transition-shadow duration-300 bg-muted/10 border-primary/10">
+                        <Card key={index} className="hover:shadow-md hover:-translate-y-1 transition-all duration-300 bg-muted/10 border-primary/10">
                           <CardContent className="p-4">
                             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                               <div>
@@ -334,7 +270,7 @@ const CourseDetailsPage = () => {
                               </div>
                               <div className="flex flex-wrap gap-2">
                                 {college.features.map((feature, idx) => (
-                                  <Badge key={idx} variant="secondary" className="whitespace-nowrap">
+                                  <Badge key={idx} variant="secondary" className="whitespace-nowrap hover:bg-secondary/80 transition-all">
                                     {feature}
                                   </Badge>
                                 ))}

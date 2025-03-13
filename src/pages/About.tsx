@@ -4,7 +4,7 @@ import Header from '@/components/Header';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { BookOpen, BriefcaseIcon, Compass, Heart, GraduationCap, Building } from 'lucide-react';
+import { BookOpen, BriefcaseIcon, Compass, Heart, GraduationCap, Building, ArrowRight } from 'lucide-react';
 import AnimatedTransition from '@/components/AnimatedTransition';
 import { Link } from 'react-router-dom';
 
@@ -17,7 +17,7 @@ const About = () => {
         <div className="max-w-4xl mx-auto">
           <AnimatedTransition>
             <div className="text-center mb-12">
-              <Badge className="mb-3 bg-primary/10 text-primary border-primary/20 hover:bg-primary/20">About EduPathfinder</Badge>
+              <Badge className="mb-3 bg-primary/10 text-primary border-primary/20 hover:bg-primary/20 transition-all">About EduPathfinder</Badge>
               <h1 className="text-4xl font-bold mb-4 bg-gradient-to-r from-primary via-primary/80 to-primary/60 bg-clip-text text-transparent">
                 Guiding Students Towards Their Ideal Future
               </h1>
@@ -29,7 +29,7 @@ const About = () => {
           
           <AnimatedTransition showDelay={100}>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
-              <Card className="p-6 hover:shadow-lg transition-all duration-300 bg-card">
+              <Card className="p-6 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 bg-card/80 backdrop-blur-sm">
                 <div className="flex items-start gap-4">
                   <div className="bg-primary/10 p-3 rounded-md">
                     <Compass className="h-6 w-6 text-primary" />
@@ -43,7 +43,7 @@ const About = () => {
                 </div>
               </Card>
               
-              <Card className="p-6 hover:shadow-lg transition-all duration-300 bg-card">
+              <Card className="p-6 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 bg-card/80 backdrop-blur-sm">
                 <div className="flex items-start gap-4">
                   <div className="bg-primary/10 p-3 rounded-md">
                     <Heart className="h-6 w-6 text-primary" />
@@ -90,14 +90,15 @@ const About = () => {
           </AnimatedTransition>
           
           <AnimatedTransition showDelay={300}>
-            <div className="text-center bg-primary/5 rounded-lg p-8 backdrop-blur-sm">
+            <div className="text-center bg-primary/5 rounded-lg p-8 backdrop-blur-sm border border-primary/10 hover:shadow-lg hover:border-primary/20 transition-all duration-300">
               <h2 className="text-2xl font-bold mb-4">Ready to Start Your Journey?</h2>
               <p className="text-muted-foreground mb-6">
                 Our AI assistant is available 24/7 to answer your questions and guide you through your educational choices.
               </p>
               <Link to="/">
-                <Button size="lg" className="bg-primary hover:bg-primary/90">
+                <Button size="lg" className="bg-primary hover:bg-primary/90 hover:shadow-md active:scale-[0.98] transition-all group">
                   Begin Exploring
+                  <ArrowRight className="ml-1 group-hover:translate-x-1 transition-transform" />
                 </Button>
               </Link>
             </div>
@@ -105,7 +106,7 @@ const About = () => {
         </div>
       </main>
       
-      <footer className="bg-card border-t py-8 px-4">
+      <footer className="bg-card/80 backdrop-blur-sm border-t py-8 px-4">
         <div className="max-w-4xl mx-auto text-center text-sm text-muted-foreground">
           © {new Date().getFullYear()} EduPathfinder. All rights reserved.
         </div>
@@ -119,7 +120,7 @@ const FeatureCard: React.FC<{
   title: string;
   description: string;
 }> = ({ icon, title, description }) => (
-  <Card className="p-6 hover:shadow-lg transition-all duration-300 bg-card/50 backdrop-blur-sm border-primary/10">
+  <Card className="p-6 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 bg-card/50 backdrop-blur-sm border-primary/10 cursor-pointer">
     <div className="flex items-start gap-4">
       <div className="bg-primary/10 p-3 rounded-md">
         {icon}
