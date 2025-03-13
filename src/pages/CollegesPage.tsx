@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from '@/components/Header';
 import { Input } from "@/components/ui/input";
@@ -11,9 +11,11 @@ import { MapPin, Search, Building } from 'lucide-react';
 import { coursesData, College } from '@/data/coursesData';
 import AnimatedTransition from '@/components/AnimatedTransition';
 import CoursesModal from '@/components/CoursesModal';
+import { useToast } from "@/hooks/use-toast";
 
 const CollegesPage = () => {
   const navigate = useNavigate();
+  const { toast } = useToast();
   const [searchTerm, setSearchTerm] = useState('');
   const [countryFilter, setCountryFilter] = useState('all');
   const [stateFilter, setStateFilter] = useState('all');
@@ -27,50 +29,72 @@ const CollegesPage = () => {
     index === self.findIndex((c) => c.name === college.name)
   );
   
+  // Extract all unique countries
   const uniqueCountries = [...new Set(
     uniqueColleges.map(college => {
       const parts = college.location.split(',');
       return parts.length > 1 ? parts[parts.length - 1].trim() : parts[0].trim();
     })
-  )];
+  )].sort();
   
+  // Extract states based on selected country
   const uniqueStates = [...new Set(
     uniqueColleges
-      .filter(college => countryFilter === 'all' || college.location.includes(countryFilter))
+      .filter(college => {
+        const parts = college.location.split(',');
+        const country = parts.length > 1 ? parts[parts.length - 1].trim() : parts[0].trim();
+        return countryFilter === 'all' || country === countryFilter;
+      })
       .map(college => {
         const parts = college.location.split(',');
-        return parts.length > 1 ? parts[1].trim() : '';
+        return parts.length > 1 ? parts[parts.length - 2].trim() : '';
       })
       .filter(state => state !== '')
-  )];
+  )].sort();
   
+  // Extract districts based on selected state
   const uniqueDistricts = [...new Set(
     uniqueColleges
       .filter(college => {
-        if (countryFilter !== 'all' && !college.location.includes(countryFilter)) return false;
-        if (stateFilter !== 'all') {
-          const parts = college.location.split(',');
-          return parts.length > 1 && parts[1].trim() === stateFilter;
-        }
-        return true;
+        const parts = college.location.split(',');
+        const country = parts.length > 1 ? parts[parts.length - 1].trim() : parts[0].trim();
+        const state = parts.length > 1 ? parts[parts.length - 2].trim() : '';
+        
+        return (countryFilter === 'all' || country === countryFilter) && 
+               (stateFilter === 'all' || state === stateFilter);
       })
       .map(college => {
         const parts = college.location.split(',');
         return parts[0].trim();
       })
       .filter(district => district !== '')
-  )];
+  )].sort();
   
+  // Reset dependent filters when parent filter changes
+  useEffect(() => {
+    if (countryFilter !== 'all') {
+      setStateFilter('all');
+      setDistrictFilter('all');
+    }
+  }, [countryFilter]);
+
+  useEffect(() => {
+    if (stateFilter !== 'all') {
+      setDistrictFilter('all');
+    }
+  }, [stateFilter]);
+  
+  // Filter colleges based on all criteria
   const filteredColleges = uniqueColleges.filter(college => {
     const matchesSearch = searchTerm === '' || 
       college.name.toLowerCase().includes(searchTerm.toLowerCase());
     
     const locationParts = college.location.split(',').map(part => part.trim());
     const district = locationParts[0];
-    const state = locationParts.length > 1 ? locationParts[1] : '';
-    const country = locationParts.length > 2 ? locationParts[2] : locationParts[locationParts.length - 1];
+    const state = locationParts.length > 2 ? locationParts[1] : locationParts.length > 1 ? locationParts[locationParts.length - 2] : '';
+    const country = locationParts.length > 2 ? locationParts[2] : locationParts.length > 1 ? locationParts[locationParts.length - 1] : locationParts[0];
     
-    const matchesCountry = countryFilter === 'all' || country.includes(countryFilter);
+    const matchesCountry = countryFilter === 'all' || country === countryFilter;
     const matchesState = stateFilter === 'all' || state === stateFilter;
     const matchesDistrict = districtFilter === 'all' || district === districtFilter;
     
@@ -78,7 +102,27 @@ const CollegesPage = () => {
   });
 
   const handleViewDetails = (college: College) => {
+    toast({
+      title: "Viewing college details",
+      description: `Loading details for ${college.name}`,
+      duration: 2000,
+    });
     navigate(`/colleges/${encodeURIComponent(college.name)}`);
+  };
+
+  const handleFilterChange = (type: string, value: string) => {
+    toast({
+      description: `Filter updated: ${type} set to ${value === 'all' ? 'All' : value}`,
+      duration: 1500,
+    });
+    
+    if (type === 'country') {
+      setCountryFilter(value);
+    } else if (type === 'state') {
+      setStateFilter(value);
+    } else if (type === 'district') {
+      setDistrictFilter(value);
+    }
   };
 
   return (
@@ -106,7 +150,7 @@ const CollegesPage = () => {
                         placeholder="Search colleges..."
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
-                        className="pl-10 glass-input active:scale-[1.01] focus:scale-[1.01] transition-all"
+                        className="pl-10 glass-input active:scale-[0.99] focus:scale-[1.01] transition-all hover:border-primary/50"
                       />
                     </div>
                   </div>
@@ -115,13 +159,9 @@ const CollegesPage = () => {
                     <label className="text-sm font-medium">Country</label>
                     <Select
                       value={countryFilter}
-                      onValueChange={(value) => {
-                        setCountryFilter(value);
-                        setStateFilter('all');
-                        setDistrictFilter('all');
-                      }}
+                      onValueChange={(value) => handleFilterChange('country', value)}
                     >
-                      <SelectTrigger className="glass-input active:scale-[1.01] hover:shadow-md transition-all">
+                      <SelectTrigger className="glass-input active:scale-[0.98] hover:shadow-md transition-all">
                         <SelectValue placeholder="Select country" />
                       </SelectTrigger>
                       <SelectContent>
@@ -137,12 +177,9 @@ const CollegesPage = () => {
                     <label className="text-sm font-medium">State</label>
                     <Select
                       value={stateFilter}
-                      onValueChange={(value) => {
-                        setStateFilter(value);
-                        setDistrictFilter('all');
-                      }}
+                      onValueChange={(value) => handleFilterChange('state', value)}
                     >
-                      <SelectTrigger className="glass-input active:scale-[1.01] hover:shadow-md transition-all">
+                      <SelectTrigger className="glass-input active:scale-[0.98] hover:shadow-md transition-all">
                         <SelectValue placeholder="Select state" />
                       </SelectTrigger>
                       <SelectContent>
@@ -158,9 +195,9 @@ const CollegesPage = () => {
                     <label className="text-sm font-medium">District</label>
                     <Select
                       value={districtFilter}
-                      onValueChange={setDistrictFilter}
+                      onValueChange={(value) => handleFilterChange('district', value)}
                     >
-                      <SelectTrigger className="glass-input active:scale-[1.01] hover:shadow-md transition-all">
+                      <SelectTrigger className="glass-input active:scale-[0.98] hover:shadow-md transition-all">
                         <SelectValue placeholder="Select district" />
                       </SelectTrigger>
                       <SelectContent>
@@ -174,12 +211,16 @@ const CollegesPage = () => {
                   
                   <Button 
                     variant="outline" 
-                    className="w-full hover:bg-primary/10 hover:text-primary hover:shadow-md active:scale-[0.98] transition-all"
+                    className="w-full hover:bg-primary/10 hover:text-primary hover:shadow-md active:scale-[0.97] transition-all"
                     onClick={() => {
                       setSearchTerm('');
                       setCountryFilter('all');
                       setStateFilter('all');
                       setDistrictFilter('all');
+                      toast({
+                        description: "All filters reset",
+                        duration: 1500,
+                      });
                     }}
                   >
                     Reset Filters
@@ -206,8 +247,12 @@ const CollegesPage = () => {
                         setCountryFilter('all');
                         setStateFilter('all');
                         setDistrictFilter('all');
+                        toast({
+                          description: "All filters reset",
+                          duration: 1500,
+                        });
                       }}
-                      className="hover:bg-primary/10 hover:text-primary hover:shadow-md active:scale-[0.98] transition-all"
+                      className="hover:bg-primary/10 hover:text-primary hover:shadow-md active:scale-[0.97] transition-all"
                     >
                       Reset Filters
                     </Button>
@@ -238,7 +283,7 @@ const CollegesPage = () => {
                       <CardFooter>
                         <Button 
                           size="sm" 
-                          className="w-full hover:bg-primary/90 hover:shadow-md active:scale-[0.98] transition-all" 
+                          className="w-full hover:bg-primary/90 hover:shadow-md active:scale-[0.96] transition-all" 
                           variant="outline"
                           onClick={() => handleViewDetails(college)}
                         >
