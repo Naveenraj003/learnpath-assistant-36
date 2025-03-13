@@ -13,7 +13,7 @@ interface UserData {
 interface AuthContextType {
   isLoggedIn: boolean;
   userData: UserData | null;
-  login: (data: UserData) => void;
+  login: (data: UserData) => boolean;
   logout: () => void;
 }
 
@@ -59,7 +59,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return regex.test(email);
   };
 
-  const login = (data: UserData) => {
+  const login = (data: UserData): boolean => {
     // Validate required fields and email format
     if (!data.name || !data.email || !data.educationLevel || !data.state) {
       console.error("Missing required fields");

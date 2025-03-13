@@ -154,7 +154,7 @@ const LoginPage = () => {
       return;
     }
     
-    // Call the login function from AuthContext
+    // Call the login function from AuthContext and check its return value
     const loginSuccess = login(formData);
     
     if (loginSuccess) {
