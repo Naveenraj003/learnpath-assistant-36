@@ -6,7 +6,7 @@ import { ModeToggle } from "@/components/ui/mode-toggle";
 import { 
   GraduationCap,
   Menu,
-  X,
+  LogOut,
   BookOpen, 
   Building, 
   BriefcaseIcon,
@@ -14,6 +14,8 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { useAuth } from '@/contexts/AuthContext';
+import { toast } from "sonner";
 
 interface HeaderProps {
   className?: string;
@@ -22,6 +24,7 @@ interface HeaderProps {
 const Header = ({ className }: HeaderProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate();
+  const { isLoggedIn, logout } = useAuth();
   
   const menuItems = [
     { path: '/', label: 'Home', icon: null },
@@ -33,6 +36,12 @@ const Header = ({ className }: HeaderProps) => {
 
   const handleLogin = () => {
     navigate('/login');
+  };
+
+  const handleLogout = () => {
+    logout();
+    toast.success("Logged out successfully");
+    navigate('/');
   };
 
   return (
@@ -49,7 +58,7 @@ const Header = ({ className }: HeaderProps) => {
             <Link 
               key={item.path}
               to={item.path} 
-              className="text-sm font-medium transition-colors hover:text-primary flex items-center gap-1"
+              className="text-sm font-medium transition-colors hover:text-primary flex items-center gap-1 hover:scale-105 active:scale-95 transition-all"
             >
               {item.icon}
               <span>{item.label}</span>
@@ -57,22 +66,34 @@ const Header = ({ className }: HeaderProps) => {
           ))}
         </nav>
         
-        <Button 
-          variant="outline" 
-          size="sm" 
-          onClick={handleLogin}
-          className="hidden md:flex items-center gap-1"
-        >
-          <LogIn className="h-4 w-4" />
-          <span>Login</span>
-        </Button>
+        {isLoggedIn ? (
+          <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={handleLogout}
+            className="hidden md:flex items-center gap-1 hover:bg-red-50 hover:text-red-500 hover:border-red-200 dark:hover:bg-red-950 dark:hover:text-red-400 dark:hover:border-red-800 transition-all hover:shadow-md active:scale-95"
+          >
+            <LogOut className="h-4 w-4" />
+            <span>Logout</span>
+          </Button>
+        ) : (
+          <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={handleLogin}
+            className="hidden md:flex items-center gap-1 hover:bg-primary/10 hover:text-primary hover:shadow-md active:scale-95 transition-all"
+          >
+            <LogIn className="h-4 w-4" />
+            <span>Login</span>
+          </Button>
+        )}
         
         <ModeToggle />
         
         {/* Mobile navigation */}
         <Sheet open={isOpen} onOpenChange={setIsOpen}>
           <SheetTrigger asChild className="md:hidden">
-            <Button variant="ghost" size="icon">
+            <Button variant="ghost" size="icon" className="active:scale-95 transition-all">
               <Menu className="h-5 w-5" />
               <span className="sr-only">Toggle menu</span>
             </Button>
@@ -83,24 +104,38 @@ const Header = ({ className }: HeaderProps) => {
                 <Link 
                   key={item.path}
                   to={item.path} 
-                  className="text-lg font-medium transition-colors hover:text-primary flex items-center gap-2"
+                  className="text-lg font-medium transition-colors hover:text-primary flex items-center gap-2 hover:scale-105 active:scale-95 transition-all"
                   onClick={() => setIsOpen(false)}
                 >
                   {item.icon}
                   <span>{item.label}</span>
                 </Link>
               ))}
-              <Button 
-                variant="outline"
-                onClick={() => {
-                  handleLogin();
-                  setIsOpen(false);
-                }}
-                className="flex items-center gap-2"
-              >
-                <LogIn className="h-4 w-4" />
-                <span>Login</span>
-              </Button>
+              {isLoggedIn ? (
+                <Button 
+                  variant="outline"
+                  onClick={() => {
+                    handleLogout();
+                    setIsOpen(false);
+                  }}
+                  className="flex items-center gap-2 hover:bg-red-50 hover:text-red-500 hover:border-red-200 dark:hover:bg-red-950 dark:hover:text-red-400 dark:hover:border-red-800 transition-all hover:shadow-md active:scale-95"
+                >
+                  <LogOut className="h-4 w-4" />
+                  <span>Logout</span>
+                </Button>
+              ) : (
+                <Button 
+                  variant="outline"
+                  onClick={() => {
+                    handleLogin();
+                    setIsOpen(false);
+                  }}
+                  className="flex items-center gap-2 hover:bg-primary/10 hover:text-primary hover:shadow-md active:scale-95 transition-all"
+                >
+                  <LogIn className="h-4 w-4" />
+                  <span>Login</span>
+                </Button>
+              )}
             </div>
           </SheetContent>
         </Sheet>

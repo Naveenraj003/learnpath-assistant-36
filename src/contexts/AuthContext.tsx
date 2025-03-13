@@ -31,12 +31,48 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const storedUserData = localStorage.getItem('userData');
     
     if (loggedIn === 'true' && storedUserData) {
-      setIsLoggedIn(true);
-      setUserData(JSON.parse(storedUserData));
+      try {
+        const parsedUserData = JSON.parse(storedUserData);
+        
+        // Validate stored data has required fields
+        if (
+          parsedUserData.name && 
+          parsedUserData.email && 
+          parsedUserData.educationLevel && 
+          parsedUserData.state
+        ) {
+          setIsLoggedIn(true);
+          setUserData(parsedUserData);
+        } else {
+          // If data is incomplete, clear it
+          localStorage.removeItem('userLoggedIn');
+          localStorage.removeItem('userData');
+        }
+      } catch (error) {
+        // If parsing fails, clear invalid data
+        localStorage.removeItem('userLoggedIn');
+        localStorage.removeItem('userData');
+      }
     }
   }, []);
 
+  const validateEmail = (email: string): boolean => {
+    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return regex.test(email);
+  };
+
   const login = (data: UserData) => {
+    // Validate required fields and email format
+    if (!data.name || !data.email || !data.educationLevel || !data.state) {
+      console.error("Missing required fields");
+      return;
+    }
+    
+    if (!validateEmail(data.email)) {
+      console.error("Invalid email format");
+      return;
+    }
+    
     localStorage.setItem('userLoggedIn', 'true');
     localStorage.setItem('userData', JSON.stringify(data));
     setIsLoggedIn(true);

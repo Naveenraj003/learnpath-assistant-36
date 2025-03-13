@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from '@/components/Header';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -33,7 +33,7 @@ const states = [
 
 const LoginPage = () => {
   const navigate = useNavigate();
-  const { login } = useAuth();
+  const { login, isLoggedIn } = useAuth();
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState({
     name: '',
@@ -45,6 +45,24 @@ const LoginPage = () => {
     interests: '',
     careerGoals: '',
   });
+  const [errors, setErrors] = useState({
+    name: '',
+    email: '',
+    educationLevel: '',
+    state: '',
+  });
+
+  useEffect(() => {
+    // Redirect if already logged in
+    if (isLoggedIn) {
+      navigate('/');
+    }
+  }, [isLoggedIn, navigate]);
+
+  const validateEmail = (email: string) => {
+    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return regex.test(email);
+  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -52,6 +70,14 @@ const LoginPage = () => {
       ...prev,
       [name]: value
     }));
+    
+    // Clear error when field is edited
+    if (errors[name as keyof typeof errors]) {
+      setErrors(prev => ({
+        ...prev,
+        [name]: ''
+      }));
+    }
   };
 
   const handleSelectChange = (name: string, value: string) => {
@@ -59,22 +85,57 @@ const LoginPage = () => {
       ...prev,
       [name]: value
     }));
+    
+    // Clear error when field is selected
+    if (errors[name as keyof typeof errors]) {
+      setErrors(prev => ({
+        ...prev,
+        [name]: ''
+      }));
+    }
   };
 
-  const handleNext = () => {
-    if (currentStep === 1) {
-      if (!formData.name || !formData.email) {
-        toast.error("Please fill in all required fields");
-        return;
+  const validateStep = (step: number) => {
+    let valid = true;
+    const newErrors = { ...errors };
+    
+    if (step === 1) {
+      if (!formData.name.trim()) {
+        newErrors.name = 'Name is required';
+        valid = false;
       }
-    } else if (currentStep === 2) {
+      
+      if (!formData.email.trim()) {
+        newErrors.email = 'Email is required';
+        valid = false;
+      } else if (!validateEmail(formData.email)) {
+        newErrors.email = 'Please enter a valid email address';
+        valid = false;
+      }
+    } 
+    else if (step === 2) {
       if (!formData.educationLevel) {
-        toast.error("Please select your education level");
-        return;
+        newErrors.educationLevel = 'Education level is required';
+        valid = false;
+      }
+    }
+    else if (step === 3) {
+      if (!formData.state) {
+        newErrors.state = 'State is required';
+        valid = false;
       }
     }
     
-    setCurrentStep(prev => prev + 1);
+    setErrors(newErrors);
+    return valid;
+  };
+
+  const handleNext = () => {
+    if (validateStep(currentStep)) {
+      setCurrentStep(prev => prev + 1);
+    } else {
+      toast.error("Please fix the errors before continuing");
+    }
   };
 
   const handleBack = () => {
@@ -83,6 +144,18 @@ const LoginPage = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Validate all required fields
+    if (!formData.name || !formData.email || !formData.educationLevel || !formData.state) {
+      toast.error("Please fill in all required fields");
+      return;
+    }
+    
+    // Validate email format
+    if (!validateEmail(formData.email)) {
+      toast.error("Please enter a valid email address");
+      return;
+    }
     
     // Call the login function from AuthContext
     login(formData);
@@ -100,20 +173,25 @@ const LoginPage = () => {
           <AnimatedTransition>
             <div className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="name">Full Name</Label>
+                <Label htmlFor="name" className="flex items-center">
+                  Full Name <span className="text-red-500 ml-1">*</span>
+                </Label>
                 <Input
                   id="name"
                   name="name"
                   placeholder="Enter your full name"
                   value={formData.name}
                   onChange={handleChange}
-                  className="hover:shadow-md focus:shadow-md active:scale-[1.01] transition-all"
+                  className={`hover:shadow-md focus:shadow-md active:scale-[1.01] transition-all ${errors.name ? 'border-red-500 focus:ring-red-500' : ''}`}
                   required
                 />
+                {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name}</p>}
               </div>
               
               <div className="space-y-2">
-                <Label htmlFor="email">Email Address</Label>
+                <Label htmlFor="email" className="flex items-center">
+                  Email Address <span className="text-red-500 ml-1">*</span>
+                </Label>
                 <Input
                   id="email"
                   name="email"
@@ -121,9 +199,10 @@ const LoginPage = () => {
                   placeholder="you@example.com"
                   value={formData.email}
                   onChange={handleChange}
-                  className="hover:shadow-md focus:shadow-md active:scale-[1.01] transition-all"
+                  className={`hover:shadow-md focus:shadow-md active:scale-[1.01] transition-all ${errors.email ? 'border-red-500 focus:ring-red-500' : ''}`}
                   required
                 />
+                {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
               </div>
             </div>
           </AnimatedTransition>
@@ -134,20 +213,32 @@ const LoginPage = () => {
           <AnimatedTransition>
             <div className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="educationLevel">Highest Education Level Completed</Label>
+                <Label htmlFor="educationLevel" className="flex items-center">
+                  Highest Education Level Completed <span className="text-red-500 ml-1">*</span>
+                </Label>
                 <Select
                   value={formData.educationLevel}
                   onValueChange={(value) => handleSelectChange('educationLevel', value)}
                 >
-                  <SelectTrigger id="educationLevel" className="w-full hover:shadow-md active:scale-[1.01] transition-all">
+                  <SelectTrigger 
+                    id="educationLevel" 
+                    className={`w-full hover:shadow-md active:scale-[1.01] transition-all ${errors.educationLevel ? 'border-red-500 focus:ring-red-500' : ''}`}
+                  >
                     <SelectValue placeholder="Select your education level" />
                   </SelectTrigger>
                   <SelectContent>
                     {educationLevels.map((level) => (
-                      <SelectItem key={level} value={level}>{level}</SelectItem>
+                      <SelectItem 
+                        key={level} 
+                        value={level}
+                        className="hover:bg-primary/10 cursor-pointer transition-colors"
+                      >
+                        {level}
+                      </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
+                {errors.educationLevel && <p className="text-red-500 text-sm mt-1">{errors.educationLevel}</p>}
               </div>
               
               <div className="space-y-2">
@@ -170,20 +261,32 @@ const LoginPage = () => {
           <AnimatedTransition>
             <div className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="state">State</Label>
+                <Label htmlFor="state" className="flex items-center">
+                  State <span className="text-red-500 ml-1">*</span>
+                </Label>
                 <Select
                   value={formData.state}
                   onValueChange={(value) => handleSelectChange('state', value)}
                 >
-                  <SelectTrigger id="state" className="w-full hover:shadow-md active:scale-[1.01] transition-all">
+                  <SelectTrigger 
+                    id="state" 
+                    className={`w-full hover:shadow-md active:scale-[1.01] transition-all ${errors.state ? 'border-red-500 focus:ring-red-500' : ''}`}
+                  >
                     <SelectValue placeholder="Select your state" />
                   </SelectTrigger>
                   <SelectContent>
                     {states.map((state) => (
-                      <SelectItem key={state} value={state}>{state}</SelectItem>
+                      <SelectItem 
+                        key={state} 
+                        value={state}
+                        className="hover:bg-primary/10 cursor-pointer transition-colors"
+                      >
+                        {state}
+                      </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
+                {errors.state && <p className="text-red-500 text-sm mt-1">{errors.state}</p>}
               </div>
               
               <div className="space-y-2">
@@ -302,7 +405,7 @@ const LoginPage = () => {
                   variant="outline" 
                   onClick={handleBack} 
                   type="button"
-                  className="hover:bg-primary/10 hover:text-primary hover:shadow-md active:scale-[0.98] transition-all"
+                  className="hover:bg-primary/10 hover:text-primary hover:shadow-md active:scale-95 transition-all"
                 >
                   Back
                 </Button>
@@ -311,7 +414,7 @@ const LoginPage = () => {
                   variant="outline" 
                   onClick={() => navigate('/')} 
                   type="button"
-                  className="hover:bg-primary/10 hover:text-primary hover:shadow-md active:scale-[0.98] transition-all"
+                  className="hover:bg-primary/10 hover:text-primary hover:shadow-md active:scale-95 transition-all"
                 >
                   <Home className="mr-2 h-4 w-4" />
                   Home
@@ -322,7 +425,7 @@ const LoginPage = () => {
                 <Button 
                   onClick={handleNext} 
                   type="button"
-                  className="hover:bg-primary/90 hover:shadow-md active:scale-[0.98] transition-all"
+                  className="hover:bg-primary/90 hover:shadow-md active:scale-95 transition-all"
                 >
                   Next
                 </Button>
@@ -330,7 +433,7 @@ const LoginPage = () => {
                 <Button 
                   onClick={handleSubmit} 
                   type="submit"
-                  className="hover:bg-primary/90 hover:shadow-md active:scale-[0.98] transition-all"
+                  className="hover:bg-primary/90 hover:shadow-md active:scale-95 transition-all"
                 >
                   Complete
                 </Button>

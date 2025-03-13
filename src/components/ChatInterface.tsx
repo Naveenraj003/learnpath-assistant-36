@@ -70,14 +70,14 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ className }) => {
         "flex flex-col items-center justify-center h-full p-8 text-center space-y-4 glass-panel rounded-2xl",
         className
       )}>
-        <Sparkles className="h-12 w-12 text-primary/50" />
+        <Sparkles className="h-12 w-12 text-primary/50 animate-pulse" />
         <h3 className="text-xl font-medium">Login to Access Chat Assistant</h3>
         <p className="text-muted-foreground">
           Please login to use our AI career assistant and get personalized guidance.
         </p>
         <Button 
           onClick={() => navigate('/login')}
-          className="mt-4"
+          className="mt-4 hover:bg-primary/90 hover:shadow-md active:scale-95 transition-all"
         >
           <LogIn className="mr-2 h-4 w-4" />
           Login Now
@@ -101,7 +101,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ className }) => {
           variant="ghost" 
           size="sm" 
           onClick={clearChat}
-          className="text-muted-foreground hover:text-destructive"
+          className="text-muted-foreground hover:text-destructive hover:bg-destructive/10 active:scale-95 transition-all"
         >
           <Trash2 className="h-4 w-4 mr-1" /> Clear
         </Button>
@@ -133,7 +133,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ className }) => {
 
       {showScrollButton && (
         <Button
-          className="absolute bottom-20 right-4 rounded-full w-10 h-10 p-0 shadow-md bg-background/80 backdrop-blur-sm"
+          className="absolute bottom-20 right-4 rounded-full w-10 h-10 p-0 shadow-md bg-background/80 backdrop-blur-sm hover:shadow-lg active:scale-95 transition-all"
           size="icon"
           onClick={scrollToBottom}
         >
@@ -149,14 +149,14 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ className }) => {
             value={messageInput}
             onChange={(e) => setMessageInput(e.target.value)}
             onKeyDown={handleKeyDown}
-            className="resize-none pr-12 glass-input min-h-[60px] max-h-[200px]"
+            className="resize-none pr-12 glass-input min-h-[60px] max-h-[200px] focus:shadow-md transition-all"
             rows={1}
           />
           <Button
             type="submit"
             size="icon"
             disabled={!messageInput.trim()}
-            className="absolute right-2 bottom-2 rounded-full w-8 h-8 p-0"
+            className="absolute right-2 bottom-2 rounded-full w-8 h-8 p-0 hover:bg-primary/90 active:scale-95 transition-all"
           >
             <Send className="h-4 w-4" />
           </Button>
@@ -199,7 +199,7 @@ const SuggestionChip: React.FC<SuggestionChipProps> = ({ children, onClick }) =>
     <button
       type="button"
       onClick={onClick}
-      className="inline-flex items-center text-xs px-3 py-1 rounded-full bg-primary/10 text-primary hover:bg-primary/20 transition-colors"
+      className="inline-flex items-center text-xs px-3 py-1 rounded-full bg-primary/10 text-primary hover:bg-primary/20 active:scale-95 hover:shadow-sm transition-all"
     >
       <Sparkles className="h-3 w-3 mr-1" />
       {children}
