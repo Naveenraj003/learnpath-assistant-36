@@ -6,7 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { BriefcaseIcon, Building, DollarSign, LineChart, MapPin, TrendingUp, Users, Banknote, GraduationCap, Award } from 'lucide-react';
+import { BriefcaseIcon, Building, DollarSign, LineChart, MapPin, TrendingUp, Users, Banknote, GraduationCap, Award, Globe } from 'lucide-react';
 import { coursesData } from '@/data/coursesData';
 import AnimatedTransition from '@/components/AnimatedTransition';
 
