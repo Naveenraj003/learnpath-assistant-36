@@ -29,8 +29,8 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
       isUser ? "justify-end" : "justify-start"
     )}>
       {!isUser && (
-        <Avatar className="w-8 h-8 border bg-primary/10 shrink-0 mt-1">
-          <div className="text-xs font-semibold text-primary">AI</div>
+        <Avatar className="w-8 h-8 border-0 shrink-0 mt-1 bg-gradient-to-br from-purple-500 to-blue-500 text-white shadow-md">
+          <div className="text-xs font-semibold">AI</div>
         </Avatar>
       )}
       
@@ -65,7 +65,7 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
       </div>
       
       {isUser && (
-        <Avatar className="w-8 h-8 border shrink-0 mt-1">
+        <Avatar className="w-8 h-8 shrink-0 mt-1 bg-gradient-to-br from-teal-500 to-emerald-500 text-white border-0 shadow-md">
           <div className="text-xs font-semibold">You</div>
         </Avatar>
       )}
