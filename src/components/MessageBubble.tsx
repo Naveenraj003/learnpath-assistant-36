@@ -25,23 +25,23 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
   
   return (
     <div className={cn(
-      "flex w-full mb-4 items-end gap-2",
+      "flex w-full mb-4 items-start gap-2",
       isUser ? "justify-end" : "justify-start"
     )}>
       {!isUser && (
-        <Avatar className="w-8 h-8 border bg-primary/10">
+        <Avatar className="w-8 h-8 border bg-primary/10 shrink-0 mt-1">
           <div className="text-xs font-semibold text-primary">AI</div>
         </Avatar>
       )}
       
       <div
         className={cn(
-          "relative",
+          "relative max-w-[80%]",
           isUser ? "chat-bubble-user" : "chat-bubble-bot"
         )}
       >
         <div className="flex flex-col">
-          <div className="prose prose-sm max-w-none">
+          <div className="prose prose-sm max-w-none break-words">
             {message.content}
             {isTyping && (
               <span className="inline-flex ml-1 items-center">
@@ -65,7 +65,7 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
       </div>
       
       {isUser && (
-        <Avatar className="w-8 h-8 border">
+        <Avatar className="w-8 h-8 border shrink-0 mt-1">
           <div className="text-xs font-semibold">You</div>
         </Avatar>
       )}

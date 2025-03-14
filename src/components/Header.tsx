@@ -49,7 +49,7 @@ const Header = ({ className }: HeaderProps) => {
     <header className={cn("w-full py-4 px-6 flex items-center justify-between bg-background/60 backdrop-blur-md border-b", className)}>
       <Link to="/" className="flex items-center gap-2">
         <GraduationCap className="h-6 w-6 text-primary" />
-        <span className="font-bold text-xl">CareerPath.in</span>
+        <span className="font-bold text-xl">CareerPath</span>
       </Link>
       
       <div className="flex items-center gap-4">
