@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Link, useNavigate } from "react-router-dom";
@@ -8,6 +9,7 @@ import ChatInterface from '@/components/ChatInterface';
 import { ChatProvider, useChat } from '@/contexts/ChatContext';
 import { useAuth } from '@/contexts/AuthContext';
 import CoursesModal from '@/components/CoursesModal';
+import { coursesData } from '@/data/coursesData';
 
 const HeroSection = () => {
   const { sendMessage } = useChat();
@@ -15,6 +17,10 @@ const HeroSection = () => {
   const navigate = useNavigate();
   const [isCoursesModalOpen, setIsCoursesModalOpen] = useState(false);
   const [modalType, setModalType] = useState<'courses' | 'colleges'>('courses');
+  
+  // Calculate the actual counts from the data
+  const coursesCount = coursesData.length;
+  const collegesCount = coursesData.reduce((total, course) => total + course.topColleges.length, 0);
   
   const handleOpenCoursesModal = () => {
     setModalType('courses');
@@ -96,12 +102,12 @@ const HeroSection = () => {
               <div className="grid grid-cols-2 gap-4">
                 <Stat 
                   icon={<BookOpen className="h-5 w-5 text-primary" />} 
-                  value="300+" 
+                  value={`${coursesCount}`} 
                   label="Courses" 
                 />
                 <Stat 
                   icon={<Building className="h-5 w-5 text-primary" />} 
-                  value="1000+" 
+                  value={`${collegesCount}`} 
                   label="Colleges" 
                 />
               </div>
