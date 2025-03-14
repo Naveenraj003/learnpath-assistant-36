@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Link, useNavigate } from "react-router-dom";
@@ -99,13 +98,11 @@ const HeroSection = () => {
                   icon={<BookOpen className="h-5 w-5 text-primary" />} 
                   value="300+" 
                   label="Courses" 
-                  onClick={handleOpenCoursesModal}
                 />
                 <Stat 
                   icon={<Building className="h-5 w-5 text-primary" />} 
                   value="1000+" 
                   label="Colleges" 
-                  onClick={handleOpenCollegesModal}
                 />
               </div>
             </div>
