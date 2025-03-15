@@ -5,16 +5,19 @@ import Header from '@/components/Header';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { MapPin, Building, GraduationCap, Award, Users, Briefcase, FileText, ArrowLeft } from 'lucide-react';
+import { MapPin, Building, GraduationCap, Award, Users, Briefcase, FileText, ArrowLeft, ExternalLink } from 'lucide-react';
 import { coursesData, College } from '@/data/coursesData';
 import AnimatedTransition from '@/components/AnimatedTransition';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 const CollegeDetailsPage = () => {
   const { collegeName } = useParams();
   const navigate = useNavigate();
   const [college, setCollege] = useState<College | null>(null);
   const [activeTab, setActiveTab] = useState("overview");
+  const [selectedAlumni, setSelectedAlumni] = useState<any>(null);
   
   useEffect(() => {
     if (collegeName) {
@@ -63,22 +66,30 @@ const CollegeDetailsPage = () => {
       {
         name: "Sundar Pichai",
         position: "CEO of Google",
-        batch: "1993"
+        batch: "1993",
+        photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ee/Sundar_Pichai_%282023%29_cropped.jpg/440px-Sundar_Pichai_%282023%29_cropped.jpg", 
+        bio: "Pichai Sundararajan, better known as Sundar Pichai, is an Indian-American business executive. He is the chief executive officer of Alphabet Inc. and its subsidiary Google. Born in Madurai, India, Pichai earned his degree from IIT Kharagpur in metallurgical engineering."
       },
       {
         name: "Satya Nadella",
         position: "CEO of Microsoft",
-        batch: "1988"
+        batch: "1988",
+        photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0e/Satya_Nadella_%28cropped%29.jpg/440px-Satya_Nadella_%28cropped%29.jpg",
+        bio: "Satya Narayana Nadella is an Indian-American business executive. He is the executive chairman and CEO of Microsoft, succeeding Steve Ballmer as CEO in 2014, and John W. Thompson as chairman in 2021. Before becoming CEO, he was the executive vice president of Microsoft's cloud and enterprise group."
       },
       {
         name: "N. R. Narayana Murthy",
         position: "Co-founder of Infosys",
-        batch: "1969"
+        batch: "1969",
+        photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3d/Narayana_Murthy.jpg/440px-Narayana_Murthy.jpg",
+        bio: "Nagavara Ramarao Narayana Murthy is an Indian billionaire businessman. He is the co-founder of Infosys, and has been the chairman, chief executive officer, president, and chief mentor of the company before retiring and taking the title chairman emeritus."
       },
       {
         name: "Nandan Nilekani",
         position: "Co-founder of Infosys",
-        batch: "1978"
+        batch: "1978",
+        photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/12/Nandan_Nilekani_-_World_Economic_Forum_Annual_Meeting_2011.jpg/440px-Nandan_Nilekani_-_World_Economic_Forum_Annual_Meeting_2011.jpg",
+        bio: "Nandan Nilekani is an Indian entrepreneur, bureaucrat, and politician. He co-founded Infosys and is the non-executive chairman of the company. He was the chairman of the Unique Identification Authority of India (UIDAI). After a successful career at Infosys, he headed the Government of India's technology committee."
       }
     ];
   };
@@ -121,14 +132,14 @@ const CollegeDetailsPage = () => {
             <CardHeader>
               <div className="flex justify-between items-start">
                 <div>
-                  <CardTitle className="text-3xl">{college.name}</CardTitle>
+                  <CardTitle className="text-3xl">{college?.name}</CardTitle>
                   <CardDescription className="flex items-center gap-1 text-base mt-2">
                     <MapPin className="h-4 w-4" />
-                    {college.location}
+                    {college?.location}
                   </CardDescription>
                 </div>
                 <Badge variant="outline" className="bg-primary/10 text-primary border-primary/20 text-base py-1.5">
-                  {college.ranking}
+                  {college?.ranking}
                 </Badge>
               </div>
             </CardHeader>
@@ -214,8 +225,8 @@ const CollegeDetailsPage = () => {
                   </div>
                   
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {getCoursesForCollege(college.name).map((course, index) => (
-                      <Card key={index} className="border border-muted">
+                    {college && getCoursesForCollege(college.name).map((course, index) => (
+                      <Card key={index} className="border border-muted hover:shadow-md transition-all">
                         <CardHeader className="pb-2">
                           <Badge className="w-fit mb-2" variant="outline">
                             {course.level}
@@ -229,7 +240,14 @@ const CollegeDetailsPage = () => {
                           <p className="line-clamp-2">{course.description}</p>
                         </CardContent>
                         <CardFooter>
-                          <Button variant="outline" size="sm" className="w-full">View Details</Button>
+                          <Button 
+                            variant="outline" 
+                            size="sm" 
+                            className="w-full"
+                            onClick={() => navigate(`/courses/${course.id}`)}
+                          >
+                            View Details
+                          </Button>
                         </CardFooter>
                       </Card>
                     ))}
@@ -303,18 +321,55 @@ const CollegeDetailsPage = () => {
                   </h3>
                   
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {getNotableAlumni(college.name).map((alumni, index) => (
-                      <Card key={index} className="border border-muted">
-                        <CardHeader className="pb-2">
-                          <CardTitle className="text-lg">{alumni.name}</CardTitle>
-                          <CardDescription>{alumni.position}</CardDescription>
-                        </CardHeader>
-                        <CardContent className="pb-2">
-                          <div className="text-sm">
-                            <span className="text-muted-foreground">Batch of {alumni.batch}</span>
+                    {college && getNotableAlumni(college.name).map((alumni, index) => (
+                      <Dialog key={index}>
+                        <DialogTrigger asChild>
+                          <Card className="border border-muted hover:shadow-md transition-all cursor-pointer">
+                            <CardHeader className="pb-2">
+                              <div className="flex items-center gap-4">
+                                <Avatar className="h-16 w-16 border-2 border-primary/20">
+                                  <AvatarImage src={alumni.photo} alt={alumni.name} />
+                                  <AvatarFallback>{alumni.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
+                                </Avatar>
+                                <div>
+                                  <CardTitle className="text-lg flex items-center gap-2">
+                                    {alumni.name}
+                                    <ExternalLink className="h-3 w-3 text-muted-foreground" />
+                                  </CardTitle>
+                                  <CardDescription>{alumni.position}</CardDescription>
+                                </div>
+                              </div>
+                            </CardHeader>
+                            <CardContent className="pb-2">
+                              <div className="text-sm">
+                                <span className="text-muted-foreground">Batch of {alumni.batch}</span>
+                              </div>
+                            </CardContent>
+                          </Card>
+                        </DialogTrigger>
+                        <DialogContent className="sm:max-w-md">
+                          <DialogHeader>
+                            <DialogTitle className="text-xl flex items-center gap-2 mb-2">
+                              {alumni.name}
+                            </DialogTitle>
+                            <DialogDescription className="text-sm font-medium text-primary">
+                              {alumni.position}
+                            </DialogDescription>
+                          </DialogHeader>
+                          <div className="flex flex-col sm:flex-row gap-4 items-start py-2">
+                            <Avatar className="h-24 w-24 border-2 border-primary/20">
+                              <AvatarImage src={alumni.photo} alt={alumni.name} />
+                              <AvatarFallback>{alumni.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
+                            </Avatar>
+                            <div className="space-y-3">
+                              <p className="text-sm leading-relaxed">{alumni.bio}</p>
+                              <div className="text-sm">
+                                <span className="text-muted-foreground font-medium">Batch of {alumni.batch}</span>
+                              </div>
+                            </div>
                           </div>
-                        </CardContent>
-                      </Card>
+                        </DialogContent>
+                      </Dialog>
                     ))}
                   </div>
                 </TabsContent>
