@@ -6,7 +6,8 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { BookOpen, BriefcaseIcon, Building, DollarSign, TrendingUp, Award, ArrowLeft, GraduationCap } from 'lucide-react';
+import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
+import { BookOpen, BriefcaseIcon, Building, DollarSign, TrendingUp, Award, ArrowLeft, GraduationCap, Info } from 'lucide-react';
 import { coursesData, Course } from '@/data/coursesData';
 import AnimatedTransition from '@/components/AnimatedTransition';
 
@@ -16,6 +17,7 @@ const CourseDetailsPage = () => {
   const [course, setCourse] = useState<Course | null>(null);
   const [activeTab, setActiveTab] = useState('overview');
   const [selectedCompany, setSelectedCompany] = useState<string | null>(null);
+  const [selectedJob, setSelectedJob] = useState<string | null>(null);
 
   useEffect(() => {
     if (courseId) {
@@ -41,8 +43,68 @@ const CourseDetailsPage = () => {
     "Accenture": ["Technology Consultant", "Java Developer", "Full Stack Engineer", "Cloud Specialist"]
   };
 
+  const jobDescriptions: Record<string, string> = {
+    "Software Engineer": "Design, develop, and maintain software applications. Strong knowledge of algorithms, data structures, and software architecture required.",
+    "Product Manager": "Define product vision, strategy, and roadmap. Work closely with engineering, design, and marketing teams to launch and iterate on products.",
+    "UI/UX Designer": "Create intuitive and engaging user interfaces. Conduct user research and testing to improve product design.",
+    "Data Scientist": "Apply advanced analytics and machine learning techniques to extract insights from data. Create predictive models and algorithms.",
+    "Full Stack Developer": "Build both frontend and backend systems. Proficiency in multiple programming languages and frameworks required.",
+    "Cloud Architect": "Design and implement cloud infrastructure. Experience with major cloud platforms like AWS, Azure, or GCP necessary.",
+    "DevOps Engineer": "Automate deployment pipelines and manage infrastructure. Focus on CI/CD practices and monitoring systems.",
+    "Program Manager": "Coordinate complex projects across multiple teams. Strong leadership and communication skills essential.",
+    "Backend Developer": "Build server-side applications and APIs. Knowledge of databases, server architecture, and performance optimization important.",
+    "ML Engineer": "Develop and deploy machine learning models to production. Experience with ML frameworks and data processing required.",
+    "Solutions Architect": "Design end-to-end solutions for client problems. Balance technical requirements with business constraints.",
+    "Technical Program Manager": "Manage technical projects and coordinate engineering teams. Technical knowledge combined with project management skills.",
+    "iOS Developer": "Build native iOS applications. Knowledge of Swift, Objective-C, and Apple's design guidelines necessary.",
+    "Mac OS Engineer": "Develop software specifically for macOS. Strong understanding of Apple's ecosystem required.",
+    "Hardware Engineer": "Design and develop physical computing systems. Knowledge of electronic components and engineering principles important.",
+    "Design Technologist": "Bridge the gap between design and engineering. Implement advanced UI prototypes and design systems.",
+    "Frontend Engineer": "Create responsive and interactive user interfaces. Experience with modern JavaScript frameworks necessary.",
+    "AI Researcher": "Advance the state of artificial intelligence through research and experimentation. Strong mathematical and theoretical background required.",
+    "Data Engineer": "Build data pipelines and infrastructure. Focus on data storage, processing, and accessibility.",
+    "Security Engineer": "Protect systems and data from threats. Experience with security protocols, encryption, and vulnerability assessment.",
+    "Systems Engineer": "Design and manage complex IT systems. Focus on reliability, performance, and integration.",
+    "Research Scientist": "Conduct original research to solve complex problems. Strong academic background and publication history valuable.",
+    "Business Analyst": "Analyze business needs and translate them into technical requirements. Strong analytical and communication skills necessary.",
+    "IT Specialist": "Provide technical expertise and support for IT systems. Troubleshoot and resolve complex technical issues.",
+    "Junior Developer": "Entry-level software development role. Learn while contributing to real projects under mentorship.",
+    "Business Consultant": "Advise clients on business strategies and processes. Combine industry knowledge with analytical skills.",
+    "QA Engineer": "Ensure software quality through testing and automation. Focus on finding bugs and improving user experience.",
+    "System Administrator": "Manage and maintain IT infrastructure. Ensure system security, performance, and reliability.",
+    "Technology Analyst": "Analyze technology trends and their business implications. Provide strategic advice on technology adoption.",
+    "Technical Lead": "Lead a team of developers while contributing to code. Provide technical direction and mentorship.",
+    "Project Manager": "Plan, execute, and close technology projects. Focus on timelines, resources, and deliverables.",
+    "Software Developer": "Create and maintain software applications. Write clean, efficient, and maintainable code.",
+    "Test Engineer": "Design and implement test plans and frameworks. Focus on both manual and automated testing approaches.",
+    "Technical Support": "Provide assistance to users facing technical issues. Troubleshoot problems and document solutions.",
+    "Network Specialist": "Design, implement, and maintain computer networks. Focus on connectivity, performance, and security.",
+    "Technology Consultant": "Advise clients on technology solutions. Combine technical expertise with business acumen.",
+    "Java Developer": "Specialize in developing applications using Java. Knowledge of Java frameworks and libraries essential.",
+    "Full Stack Engineer": "Build comprehensive web applications from frontend to backend. Wide-ranging knowledge of web technologies required.",
+    "Cloud Specialist": "Implement and manage cloud-based solutions. Experience with cloud platforms and deployment models necessary."
+  };
+
   const handleCompanyClick = (company: string) => {
     setSelectedCompany(company);
+    setSelectedJob(null);
+  };
+
+  const renderJobDetails = (job: string) => {
+    return (
+      <div className="space-y-3">
+        <h4 className="font-semibold text-md">{job}</h4>
+        <p className="text-sm">{jobDescriptions[job] || "No description available."}</p>
+        <div className="pt-2">
+          <Badge variant="outline" className="mr-2 bg-primary/10">
+            {course?.field || "General"}
+          </Badge>
+          <Badge variant="outline">
+            {course?.level || "Entry Level"}
+          </Badge>
+        </div>
+      </div>
+    );
   };
 
   if (!course) {
@@ -176,26 +238,26 @@ const CourseDetailsPage = () => {
                         <CardContent className="p-6">
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             {companyJobOpportunities[selectedCompany]?.map((job, index) => (
-                              <Card key={index} className="hover:border-primary transition-colors">
-                                <CardHeader className="pb-2">
-                                  <CardTitle className="text-lg flex items-center gap-2">
-                                    <BriefcaseIcon className="h-4 w-4 text-primary" />
-                                    {job}
-                                  </CardTitle>
-                                </CardHeader>
-                                <CardContent>
-                                  <p className="text-sm">
-                                    Apply your {course.name} knowledge in this {job} position. 
-                                    This role requires skills in problem-solving, critical thinking, 
-                                    and specific technical expertise.
-                                  </p>
-                                </CardContent>
-                                <CardFooter>
-                                  <Button size="sm" variant="outline" className="w-full">
-                                    View Job Details
-                                  </Button>
-                                </CardFooter>
-                              </Card>
+                              <Popover key={index}>
+                                <PopoverTrigger asChild>
+                                  <Card className="hover:border-primary transition-colors cursor-pointer">
+                                    <CardHeader className="pb-2">
+                                      <CardTitle className="text-lg flex items-center gap-2">
+                                        <BriefcaseIcon className="h-4 w-4 text-primary" />
+                                        {job}
+                                      </CardTitle>
+                                    </CardHeader>
+                                    <CardFooter className="pt-0">
+                                      <div className="flex justify-end w-full">
+                                        <Info className="h-4 w-4 text-muted-foreground" />
+                                      </div>
+                                    </CardFooter>
+                                  </Card>
+                                </PopoverTrigger>
+                                <PopoverContent className="w-80 p-4">
+                                  {renderJobDetails(job)}
+                                </PopoverContent>
+                              </Popover>
                             ))}
                           </div>
                         </CardContent>

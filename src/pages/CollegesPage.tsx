@@ -13,12 +13,23 @@ import AnimatedTransition from '@/components/AnimatedTransition';
 import CoursesModal from '@/components/CoursesModal';
 import { useToast } from "@/hooks/use-toast";
 
+// Define mock data for states and districts
+const statesData = [
+  { name: "Karnataka", districts: ["Bangalore", "Mysore", "Belgaum", "Mangalore"] },
+  { name: "Tamil Nadu", districts: ["Chennai", "Coimbatore", "Madurai", "Salem"] },
+  { name: "Maharashtra", districts: ["Mumbai", "Pune", "Nagpur", "Nashik"] },
+  { name: "Delhi", districts: ["New Delhi", "North Delhi", "South Delhi", "East Delhi"] },
+  { name: "Uttar Pradesh", districts: ["Lucknow", "Kanpur", "Agra", "Varanasi"] }
+];
+
 const CollegesPage = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [searchTerm, setSearchTerm] = useState('');
   const [collegeTypeFilter, setCollegeTypeFilter] = useState('all');
   const [collegeStatusFilter, setCollegeStatusFilter] = useState('all');
+  const [stateFilter, setStateFilter] = useState('all');
+  const [districtFilter, setDistrictFilter] = useState('all');
   const [showCoursesModal, setShowCoursesModal] = useState(false);
   const [modalType, setModalType] = useState<'courses' | 'colleges'>('colleges');
 
@@ -33,6 +44,11 @@ const CollegesPage = () => {
   
   // College status types
   const collegeStatusTypes = ['government', 'private', 'autonomous', 'non-autonomous'];
+  
+  // Get available districts based on selected state
+  const availableDistricts = stateFilter === 'all' 
+    ? [] 
+    : statesData.find(state => state.name === stateFilter)?.districts || [];
   
   // Filter colleges based on all criteria
   const filteredColleges = uniqueColleges.filter(college => {
@@ -53,7 +69,15 @@ const CollegesPage = () => {
       (collegeStatusFilter === 'autonomous' && (college.name.includes('University') || college.name.includes('Institute'))) ||
       (collegeStatusFilter === 'non-autonomous' && !college.name.includes('University') && !college.name.includes('Institute'));
     
-    return matchesSearch && matchesType && matchesStatus;
+    // For demo purposes, we'll match states based on college location containing the state name
+    const matchesState = stateFilter === 'all' || 
+      college.location.includes(stateFilter);
+    
+    // For demo purposes, we'll match districts if they appear in the college location
+    const matchesDistrict = districtFilter === 'all' || 
+      college.location.includes(districtFilter);
+    
+    return matchesSearch && matchesType && matchesStatus && matchesState && matchesDistrict;
   });
 
   const handleViewDetails = (college: College) => {
@@ -75,6 +99,11 @@ const CollegesPage = () => {
       setCollegeTypeFilter(value);
     } else if (type === 'status') {
       setCollegeStatusFilter(value);
+    } else if (type === 'state') {
+      setStateFilter(value);
+      setDistrictFilter('all'); // Reset district when state changes
+    } else if (type === 'district') {
+      setDistrictFilter(value);
     }
   };
 
@@ -144,6 +173,44 @@ const CollegesPage = () => {
                     </Select>
                   </div>
                   
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium">State</label>
+                    <Select
+                      value={stateFilter}
+                      onValueChange={(value) => handleFilterChange('state', value)}
+                    >
+                      <SelectTrigger className="glass-input active:scale-[0.98] hover:shadow-md transition-all">
+                        <SelectValue placeholder="Select state" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">All States</SelectItem>
+                        {statesData.map((state) => (
+                          <SelectItem key={state.name} value={state.name}>{state.name}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  
+                  {stateFilter !== 'all' && (
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium">District</label>
+                      <Select
+                        value={districtFilter}
+                        onValueChange={(value) => handleFilterChange('district', value)}
+                      >
+                        <SelectTrigger className="glass-input active:scale-[0.98] hover:shadow-md transition-all">
+                          <SelectValue placeholder="Select district" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="all">All Districts</SelectItem>
+                          {availableDistricts.map((district) => (
+                            <SelectItem key={district} value={district}>{district}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  )}
+                  
                   <Button 
                     variant="outline" 
                     className="w-full hover:bg-primary/10 hover:text-primary hover:shadow-md active:scale-[0.97] transition-all"
@@ -151,6 +218,8 @@ const CollegesPage = () => {
                       setSearchTerm('');
                       setCollegeTypeFilter('all');
                       setCollegeStatusFilter('all');
+                      setStateFilter('all');
+                      setDistrictFilter('all');
                       toast({
                         description: "All filters reset",
                         duration: 1500,
@@ -180,6 +249,8 @@ const CollegesPage = () => {
                         setSearchTerm('');
                         setCollegeTypeFilter('all');
                         setCollegeStatusFilter('all');
+                        setStateFilter('all');
+                        setDistrictFilter('all');
                         toast({
                           description: "All filters reset",
                           duration: 1500,

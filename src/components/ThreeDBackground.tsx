@@ -12,7 +12,10 @@ const GraduationCapWithDiploma = ({ position, rotationSpeed = 0.01 }) => {
   
   useFrame(() => {
     if (group.current) {
+      // Full 360-degree rotation
       group.current.rotation.y += rotationSpeed;
+      group.current.rotation.x += rotationSpeed * 0.3;
+      group.current.rotation.z += rotationSpeed * 0.1;
       group.current.position.y = position[1] + Math.sin(Date.now() * 0.001) * 0.2;
     }
   });

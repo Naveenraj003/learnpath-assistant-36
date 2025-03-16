@@ -222,16 +222,6 @@ const CollegeDetailsPage = () => {
                         </div>
                       </div>
                     </CardContent>
-                    <CardFooter>
-                      <Button 
-                        size="sm" 
-                        variant="outline" 
-                        className="w-full"
-                        onClick={() => navigate(`/courses/${course.id}`)}
-                      >
-                        View Course Details
-                      </Button>
-                    </CardFooter>
                   </Card>
                 ))}
               </div>
