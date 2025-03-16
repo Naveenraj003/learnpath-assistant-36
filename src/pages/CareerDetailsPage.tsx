@@ -6,7 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { BriefcaseIcon, Building, DollarSign, LineChart, MapPin, TrendingUp, Users, Banknote, GraduationCap, Award, Globe } from 'lucide-react';
+import { BriefcaseIcon, Building, LineChart, MapPin, TrendingUp, Users, GraduationCap, Award, Globe } from 'lucide-react';
 import { coursesData } from '@/data/coursesData';
 import AnimatedTransition from '@/components/AnimatedTransition';
 
@@ -314,7 +314,6 @@ const CareerDetailsPage = () => {
               <TabsTrigger value="overview" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">Overview</TabsTrigger>
               <TabsTrigger value="market" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">Job Market</TabsTrigger>
               <TabsTrigger value="education" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">Education</TabsTrigger>
-              <TabsTrigger value="future" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">Future Outlook</TabsTrigger>
             </TabsList>
             
             <TabsContent value="overview" className="mt-0">
@@ -378,36 +377,6 @@ const CareerDetailsPage = () => {
                             <span className="font-medium text-sm">{careerDetails.jobMarket[selectedRegion].demand}</span>
                           </div>
                         </div>
-                        
-                        <div>
-                          <h4 className="font-medium mb-2">Top Locations {selectedRegion === 'india' ? 'in India' : 'Globally'}:</h4>
-                          <div className="flex flex-wrap gap-2">
-                            {careerDetails.jobMarket[selectedRegion].locations.map((location, index) => (
-                              <Badge key={index} variant="outline" className="bg-muted/50">
-                                <MapPin className="h-3 w-3 mr-1" />
-                                {location}
-                              </Badge>
-                            ))}
-                          </div>
-                        </div>
-                        
-                        <div>
-                          <h4 className="font-medium mb-2">Salary Expectations {selectedRegion === 'india' ? 'in India' : 'Globally'}:</h4>
-                          <div className="space-y-2 text-sm">
-                            <div className="flex justify-between">
-                              <span className="text-muted-foreground">Entry Level:</span>
-                              <span className="font-medium">{careerDetails.jobMarket[selectedRegion].salaryRange.entry}</span>
-                            </div>
-                            <div className="flex justify-between">
-                              <span className="text-muted-foreground">Mid Level:</span>
-                              <span className="font-medium">{careerDetails.jobMarket[selectedRegion].salaryRange.mid}</span>
-                            </div>
-                            <div className="flex justify-between">
-                              <span className="text-muted-foreground">Senior Level:</span>
-                              <span className="font-medium">{careerDetails.jobMarket[selectedRegion].salaryRange.senior}</span>
-                            </div>
-                          </div>
-                        </div>
                       </div>
                     </CardContent>
                   </Card>
@@ -426,18 +395,6 @@ const CareerDetailsPage = () => {
                     <CardContent className="p-4">
                       <div className="space-y-4">
                         <div>
-                          <h4 className="font-medium mb-2">Key Hiring Locations:</h4>
-                          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-                            {careerDetails.jobMarket[selectedRegion].locations.map((location, index) => (
-                              <Badge key={index} variant="outline" className="justify-start">
-                                <MapPin className="h-3 w-3 mr-1" />
-                                {location}
-                              </Badge>
-                            ))}
-                          </div>
-                        </div>
-                        
-                        <div>
                           <h4 className="font-medium mb-2">Top Companies Hiring:</h4>
                           <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                             {careerDetails.jobMarket[selectedRegion].companiesHiring.map((company, index) => (
@@ -446,41 +403,6 @@ const CareerDetailsPage = () => {
                                 {company}
                               </Badge>
                             ))}
-                          </div>
-                        </div>
-                        
-                        <div>
-                          <h4 className="font-medium mb-2">Salary Range:</h4>
-                          <div className="space-y-3">
-                            <div>
-                              <div className="flex justify-between">
-                                <span className="text-muted-foreground">Entry Level:</span>
-                                <span className="font-medium">{careerDetails.jobMarket[selectedRegion].salaryRange.entry}</span>
-                              </div>
-                              <div className="w-full h-2 bg-muted rounded-full mt-1">
-                                <div className="h-full bg-primary rounded-full" style={{ width: '30%' }}></div>
-                              </div>
-                            </div>
-                            
-                            <div>
-                              <div className="flex justify-between">
-                                <span className="text-muted-foreground">Mid Level:</span>
-                                <span className="font-medium">{careerDetails.jobMarket[selectedRegion].salaryRange.mid}</span>
-                              </div>
-                              <div className="w-full h-2 bg-muted rounded-full mt-1">
-                                <div className="h-full bg-primary rounded-full" style={{ width: '60%' }}></div>
-                              </div>
-                            </div>
-                            
-                            <div>
-                              <div className="flex justify-between">
-                                <span className="text-muted-foreground">Senior Level:</span>
-                                <span className="font-medium">{careerDetails.jobMarket[selectedRegion].salaryRange.senior}</span>
-                              </div>
-                              <div className="w-full h-2 bg-muted rounded-full mt-1">
-                                <div className="h-full bg-primary rounded-full" style={{ width: '90%' }}></div>
-                              </div>
-                            </div>
                           </div>
                         </div>
                       </div>
@@ -499,30 +421,16 @@ const CareerDetailsPage = () => {
                   </h3>
                   <Card className="bg-muted/30 border-primary/10">
                     <CardContent className="p-4">
-                      <div className="space-y-4">
-                        <div>
-                          <h4 className="font-medium mb-2">Required Degrees:</h4>
-                          <ul className="space-y-1">
-                            {careerDetails.education.requiredDegrees.map((degree, index) => (
-                              <li key={index} className="flex items-center gap-2">
-                                <div className="w-1.5 h-1.5 rounded-full bg-primary"></div>
-                                <span>{degree}</span>
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
-                        
-                        <div>
-                          <h4 className="font-medium mb-2">Recommended Courses:</h4>
-                          <ul className="space-y-1">
-                            {careerDetails.courses.map((course, index) => (
-                              <li key={index} className="flex items-center gap-2">
-                                <div className="w-1.5 h-1.5 rounded-full bg-primary"></div>
-                                <span>{course.name}</span>
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
+                      <div>
+                        <h4 className="font-medium mb-2">Required Degrees:</h4>
+                        <ul className="space-y-1">
+                          {careerDetails.education.requiredDegrees.map((degree, index) => (
+                            <li key={index} className="flex items-center gap-2">
+                              <div className="w-1.5 h-1.5 rounded-full bg-primary"></div>
+                              <span>{degree}</span>
+                            </li>
+                          ))}
+                        </ul>
                       </div>
                     </CardContent>
                   </Card>
@@ -531,81 +439,19 @@ const CareerDetailsPage = () => {
                 <div>
                   <h3 className="text-lg font-semibold mb-3 flex items-center gap-2">
                     <Award className="h-4 w-4 text-primary" />
-                    Professional Development
-                  </h3>
-                  <Card className="bg-muted/30 border-primary/10">
-                    <CardContent className="p-4">
-                      <div className="space-y-4">
-                        <div>
-                          <h4 className="font-medium mb-2">Valuable Certifications:</h4>
-                          <ul className="space-y-1">
-                            {careerDetails.education.certifications.map((cert, index) => (
-                              <li key={index} className="flex items-center gap-2">
-                                <div className="w-1.5 h-1.5 rounded-full bg-primary"></div>
-                                <span>{cert}</span>
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
-                        
-                        <div>
-                          <h4 className="font-medium mb-2">Continuing Education:</h4>
-                          <ul className="space-y-1">
-                            {careerDetails.education.continuingEducation.map((edu, index) => (
-                              <li key={index} className="flex items-center gap-2">
-                                <div className="w-1.5 h-1.5 rounded-full bg-primary"></div>
-                                <span>{edu}</span>
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </div>
-              </div>
-            </TabsContent>
-            
-            <TabsContent value="future" className="mt-0">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <h3 className="text-lg font-semibold mb-3 flex items-center gap-2">
-                    <TrendingUp className="h-4 w-4 text-primary" />
-                    Career Outlook
-                  </h3>
-                  <Card className="bg-muted/30 border-primary/10">
-                    <CardContent className="p-4">
-                      <div className="space-y-4">
-                        <div>
-                          <h4 className="font-medium mb-2">Short-Term Outlook:</h4>
-                          <p>{careerDetails.futureOutlook.shortTerm}</p>
-                        </div>
-                        
-                        <div>
-                          <h4 className="font-medium mb-2">Long-Term Outlook:</h4>
-                          <p>{careerDetails.futureOutlook.longTerm}</p>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </div>
-                
-                <div>
-                  <h3 className="text-lg font-semibold mb-3 flex items-center gap-2">
-                    <TrendingUp className="h-4 w-4 text-primary" />
-                    Emerging Trends
+                    Recommended Courses
                   </h3>
                   <Card className="bg-muted/30 border-primary/10">
                     <CardContent className="p-4">
                       <div>
-                        <h4 className="font-medium mb-2">Key Emerging Trends:</h4>
-                        <div className="grid grid-cols-1 gap-2">
-                          {careerDetails.futureOutlook.emergingTrends.map((trend, index) => (
-                            <Badge key={index} className="justify-start py-2 px-3">
-                              {trend}
-                            </Badge>
+                        <ul className="space-y-1">
+                          {careerDetails.courses.map((course, index) => (
+                            <li key={index} className="flex items-center gap-2">
+                              <div className="w-1.5 h-1.5 rounded-full bg-primary"></div>
+                              <span>{course.name}</span>
+                            </li>
                           ))}
-                        </div>
+                        </ul>
                       </div>
                     </CardContent>
                   </Card>

@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from '@/components/Header';
 import { Input } from "@/components/ui/input";
@@ -17,9 +17,8 @@ const CollegesPage = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [searchTerm, setSearchTerm] = useState('');
-  const [countryFilter, setCountryFilter] = useState('all');
-  const [stateFilter, setStateFilter] = useState('all');
-  const [districtFilter, setDistrictFilter] = useState('all');
+  const [collegeTypeFilter, setCollegeTypeFilter] = useState('all');
+  const [collegeStatusFilter, setCollegeStatusFilter] = useState('all');
   const [showCoursesModal, setShowCoursesModal] = useState(false);
   const [modalType, setModalType] = useState<'courses' | 'colleges'>('colleges');
 
@@ -29,76 +28,32 @@ const CollegesPage = () => {
     index === self.findIndex((c) => c.name === college.name)
   );
   
-  // Extract all unique countries
-  const uniqueCountries = [...new Set(
-    uniqueColleges.map(college => {
-      const parts = college.location.split(',');
-      return parts.length > 1 ? parts[parts.length - 1].trim() : parts[0].trim();
-    })
-  )].sort();
+  // Extract all unique fields as college types
+  const uniqueCollegeTypes = [...new Set(coursesData.map(course => course.field))].sort();
   
-  // Extract states based on selected country
-  const uniqueStates = [...new Set(
-    uniqueColleges
-      .filter(college => {
-        const parts = college.location.split(',');
-        const country = parts.length > 1 ? parts[parts.length - 1].trim() : parts[0].trim();
-        return countryFilter === 'all' || country === countryFilter;
-      })
-      .map(college => {
-        const parts = college.location.split(',');
-        return parts.length > 1 ? parts[parts.length - 2].trim() : '';
-      })
-      .filter(state => state !== '')
-  )].sort();
-  
-  // Extract districts based on selected state
-  const uniqueDistricts = [...new Set(
-    uniqueColleges
-      .filter(college => {
-        const parts = college.location.split(',');
-        const country = parts.length > 1 ? parts[parts.length - 1].trim() : parts[0].trim();
-        const state = parts.length > 1 ? parts[parts.length - 2].trim() : '';
-        
-        return (countryFilter === 'all' || country === countryFilter) && 
-               (stateFilter === 'all' || state === stateFilter);
-      })
-      .map(college => {
-        const parts = college.location.split(',');
-        return parts[0].trim();
-      })
-      .filter(district => district !== '')
-  )].sort();
-  
-  // Reset dependent filters when parent filter changes
-  useEffect(() => {
-    if (countryFilter !== 'all') {
-      setStateFilter('all');
-      setDistrictFilter('all');
-    }
-  }, [countryFilter]);
-
-  useEffect(() => {
-    if (stateFilter !== 'all') {
-      setDistrictFilter('all');
-    }
-  }, [stateFilter]);
+  // College status types
+  const collegeStatusTypes = ['government', 'private', 'autonomous', 'non-autonomous'];
   
   // Filter colleges based on all criteria
   const filteredColleges = uniqueColleges.filter(college => {
     const matchesSearch = searchTerm === '' || 
       college.name.toLowerCase().includes(searchTerm.toLowerCase());
     
-    const locationParts = college.location.split(',').map(part => part.trim());
-    const district = locationParts[0];
-    const state = locationParts.length > 2 ? locationParts[1] : locationParts.length > 1 ? locationParts[locationParts.length - 2] : '';
-    const country = locationParts.length > 2 ? locationParts[2] : locationParts.length > 1 ? locationParts[locationParts.length - 1] : locationParts[0];
+    // In a real application, colleges would have type and status properties
+    // For this demo, we'll simulate by checking if the name includes certain keywords
+    const matchesType = collegeTypeFilter === 'all' || 
+      coursesData.some(course => 
+        course.field === collegeTypeFilter && 
+        course.topColleges.some(c => c.name === college.name)
+      );
     
-    const matchesCountry = countryFilter === 'all' || country === countryFilter;
-    const matchesState = stateFilter === 'all' || state === stateFilter;
-    const matchesDistrict = districtFilter === 'all' || district === districtFilter;
+    const matchesStatus = collegeStatusFilter === 'all' || 
+      (collegeStatusFilter === 'government' && college.name.includes('Institute')) || 
+      (collegeStatusFilter === 'private' && !college.name.includes('Institute')) ||
+      (collegeStatusFilter === 'autonomous' && (college.name.includes('University') || college.name.includes('Institute'))) ||
+      (collegeStatusFilter === 'non-autonomous' && !college.name.includes('University') && !college.name.includes('Institute'));
     
-    return matchesSearch && matchesCountry && matchesState && matchesDistrict;
+    return matchesSearch && matchesType && matchesStatus;
   });
 
   const handleViewDetails = (college: College) => {
@@ -116,12 +71,10 @@ const CollegesPage = () => {
       duration: 1500,
     });
     
-    if (type === 'country') {
-      setCountryFilter(value);
-    } else if (type === 'state') {
-      setStateFilter(value);
-    } else if (type === 'district') {
-      setDistrictFilter(value);
+    if (type === 'type') {
+      setCollegeTypeFilter(value);
+    } else if (type === 'status') {
+      setCollegeStatusFilter(value);
     }
   };
 
@@ -156,54 +109,36 @@ const CollegesPage = () => {
                   </div>
                   
                   <div className="space-y-2">
-                    <label className="text-sm font-medium">Country</label>
+                    <label className="text-sm font-medium">College Type</label>
                     <Select
-                      value={countryFilter}
-                      onValueChange={(value) => handleFilterChange('country', value)}
+                      value={collegeTypeFilter}
+                      onValueChange={(value) => handleFilterChange('type', value)}
                     >
                       <SelectTrigger className="glass-input active:scale-[0.98] hover:shadow-md transition-all">
-                        <SelectValue placeholder="Select country" />
+                        <SelectValue placeholder="Select college type" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="all">All Countries</SelectItem>
-                        {uniqueCountries.map((country) => (
-                          <SelectItem key={country} value={country}>{country}</SelectItem>
+                        <SelectItem value="all">All Types</SelectItem>
+                        {uniqueCollegeTypes.map((type) => (
+                          <SelectItem key={type} value={type}>{type.charAt(0).toUpperCase() + type.slice(1)}</SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
                   </div>
                   
                   <div className="space-y-2">
-                    <label className="text-sm font-medium">State</label>
+                    <label className="text-sm font-medium">College Status</label>
                     <Select
-                      value={stateFilter}
-                      onValueChange={(value) => handleFilterChange('state', value)}
+                      value={collegeStatusFilter}
+                      onValueChange={(value) => handleFilterChange('status', value)}
                     >
                       <SelectTrigger className="glass-input active:scale-[0.98] hover:shadow-md transition-all">
-                        <SelectValue placeholder="Select state" />
+                        <SelectValue placeholder="Select college status" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="all">All States</SelectItem>
-                        {uniqueStates.map((state) => (
-                          <SelectItem key={state} value={state}>{state}</SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium">District</label>
-                    <Select
-                      value={districtFilter}
-                      onValueChange={(value) => handleFilterChange('district', value)}
-                    >
-                      <SelectTrigger className="glass-input active:scale-[0.98] hover:shadow-md transition-all">
-                        <SelectValue placeholder="Select district" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="all">All Districts</SelectItem>
-                        {uniqueDistricts.map((district) => (
-                          <SelectItem key={district} value={district}>{district}</SelectItem>
+                        <SelectItem value="all">All Statuses</SelectItem>
+                        {collegeStatusTypes.map((status) => (
+                          <SelectItem key={status} value={status}>{status.charAt(0).toUpperCase() + status.slice(1)}</SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
@@ -214,9 +149,8 @@ const CollegesPage = () => {
                     className="w-full hover:bg-primary/10 hover:text-primary hover:shadow-md active:scale-[0.97] transition-all"
                     onClick={() => {
                       setSearchTerm('');
-                      setCountryFilter('all');
-                      setStateFilter('all');
-                      setDistrictFilter('all');
+                      setCollegeTypeFilter('all');
+                      setCollegeStatusFilter('all');
                       toast({
                         description: "All filters reset",
                         duration: 1500,
@@ -244,9 +178,8 @@ const CollegesPage = () => {
                       variant="outline" 
                       onClick={() => {
                         setSearchTerm('');
-                        setCountryFilter('all');
-                        setStateFilter('all');
-                        setDistrictFilter('all');
+                        setCollegeTypeFilter('all');
+                        setCollegeStatusFilter('all');
                         toast({
                           description: "All filters reset",
                           duration: 1500,
@@ -263,7 +196,8 @@ const CollegesPage = () => {
                       <CardHeader className="pb-2">
                         <div className="flex justify-between items-start mb-2">
                           <Badge variant="outline" className="bg-primary/10 text-primary border-primary/20">
-                            {college.location.includes(',') ? college.location.split(',')[0] : college.location}
+                            {collegeTypeFilter !== 'all' ? collegeTypeFilter : 
+                            coursesData.find(course => course.topColleges.some(c => c.name === college.name))?.field || 'General'}
                           </Badge>
                         </div>
                         <CardTitle className="text-lg">{college.name}</CardTitle>
