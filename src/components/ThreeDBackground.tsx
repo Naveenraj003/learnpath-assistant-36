@@ -5,7 +5,7 @@ import { useTheme } from 'next-themes';
 import { OrbitControls } from '@react-three/drei';
 import * as THREE from 'three';
 
-const FloatingGraduationCap = ({ position, rotationSpeed = 0.01 }) => {
+const TasseledConvocationCap = ({ position, rotationSpeed = 0.01 }) => {
   const mesh = useRef<THREE.Mesh>(null);
   const { theme } = useTheme();
   const isDark = theme === 'dark';
@@ -19,25 +19,39 @@ const FloatingGraduationCap = ({ position, rotationSpeed = 0.01 }) => {
 
   return (
     <mesh position={position} ref={mesh}>
+      {/* Square cap base */}
       <boxGeometry args={[1, 0.1, 1]} />
       <meshStandardMaterial color={isDark ? "#4338ca" : "#818cf8"} />
-      <mesh position={[0, 0.15, 0]}>
-        <cylinderGeometry args={[0.1, 0.1, 0.2, 16]} />
-        <meshStandardMaterial color={isDark ? "#4338ca" : "#818cf8"} />
-        <mesh position={[0, 0.15, 0]}>
-          <sphereGeometry args={[0.1, 16, 16]} />
-          <meshStandardMaterial color={isDark ? "#4338ca" : "#818cf8"} />
-        </mesh>
+      
+      {/* Top button */}
+      <mesh position={[0, 0.05, 0]}>
+        <cylinderGeometry args={[0.1, 0.1, 0.1, 16]} />
+        <meshStandardMaterial color={isDark ? "#312e81" : "#6366f1"} />
       </mesh>
+      
+      {/* Tassel */}
+      <group position={[0.4, 0, 0.4]} rotation={[0, 0, Math.PI / 4]}>
+        {/* Tassel thread */}
+        <mesh position={[0, -0.2, 0]}>
+          <cylinderGeometry args={[0.02, 0.02, 0.4, 8]} />
+          <meshStandardMaterial color={isDark ? "#f59e0b" : "#fbbf24"} />
+        </mesh>
+        
+        {/* Tassel end */}
+        <mesh position={[0, -0.4, 0]}>
+          <sphereGeometry args={[0.08, 8, 8]} />
+          <meshStandardMaterial color={isDark ? "#f59e0b" : "#fbbf24"} />
+        </mesh>
+      </group>
     </mesh>
   );
 };
 
-const FloatingBooks = () => {
+const FloatingConvocationCaps = () => {
   const { theme } = useTheme();
   const isDark = theme === 'dark';
   
-  const books = Array.from({ length: 15 }).map((_, i) => ({
+  const caps = Array.from({ length: 15 }).map((_, i) => ({
     position: [
       (Math.random() - 0.5) * 20,
       (Math.random() - 0.5) * 20,
@@ -49,11 +63,11 @@ const FloatingBooks = () => {
 
   return (
     <>
-      {books.map((book, i) => (
-        <FloatingGraduationCap 
+      {caps.map((cap, i) => (
+        <TasseledConvocationCap 
           key={i} 
-          position={book.position} 
-          rotationSpeed={book.speed} 
+          position={cap.position} 
+          rotationSpeed={cap.speed} 
         />
       ))}
     </>
@@ -74,7 +88,7 @@ const ThreeDBackground: React.FC = () => {
           color={isDark ? "#8b5cf6" : "#ffffff"}
         />
         <pointLight position={[-10, -10, -10]} intensity={isDark ? 0.2 : 0.5} color={isDark ? "#4c1d95" : "#c4b5fd"} />
-        <FloatingBooks />
+        <FloatingConvocationCaps />
         <OrbitControls 
           enableZoom={false} 
           enablePan={false} 
