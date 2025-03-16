@@ -5,69 +5,96 @@ import { useTheme } from 'next-themes';
 import { OrbitControls } from '@react-three/drei';
 import * as THREE from 'three';
 
-const TasseledConvocationCap = ({ position, rotationSpeed = 0.01 }) => {
-  const mesh = useRef<THREE.Mesh>(null);
+const GraduationCapWithDiploma = ({ position, rotationSpeed = 0.01 }) => {
+  const group = useRef<THREE.Group>(null);
   const { theme } = useTheme();
   const isDark = theme === 'dark';
   
   useFrame(() => {
-    if (mesh.current) {
-      mesh.current.rotation.y += rotationSpeed;
-      mesh.current.position.y = position[1] + Math.sin(Date.now() * 0.001) * 0.2;
+    if (group.current) {
+      group.current.rotation.y += rotationSpeed;
+      group.current.position.y = position[1] + Math.sin(Date.now() * 0.001) * 0.2;
     }
   });
 
   return (
-    <mesh position={position} ref={mesh}>
-      {/* Square cap base */}
-      <boxGeometry args={[1, 0.1, 1]} />
-      <meshStandardMaterial color={isDark ? "#4338ca" : "#818cf8"} />
-      
-      {/* Top button */}
-      <mesh position={[0, 0.05, 0]}>
-        <cylinderGeometry args={[0.1, 0.1, 0.1, 16]} />
-        <meshStandardMaterial color={isDark ? "#312e81" : "#6366f1"} />
+    <group position={position} ref={group}>
+      {/* Cap Base - Cylindrical part */}
+      <mesh position={[0, 0, 0]}>
+        <cylinderGeometry args={[0.7, 0.7, 0.3, 32]} />
+        <meshStandardMaterial color={isDark ? "#0f172a" : "#1e3a8a"} />
       </mesh>
       
-      {/* Tassel */}
-      <group position={[0.4, 0, 0.4]} rotation={[0, 0, Math.PI / 4]}>
-        {/* Tassel thread */}
-        <mesh position={[0, -0.2, 0]}>
-          <cylinderGeometry args={[0.02, 0.02, 0.4, 8]} />
-          <meshStandardMaterial color={isDark ? "#f59e0b" : "#fbbf24"} />
+      {/* Cap Top - Square part */}
+      <mesh position={[0, 0.25, 0]} rotation={[0, Math.PI / 4, 0]}>
+        <boxGeometry args={[1.8, 0.1, 1.8]} />
+        <meshStandardMaterial color={isDark ? "#0f172a" : "#1e3a8a"} />
+      </mesh>
+      
+      {/* Tassel Button */}
+      <mesh position={[0, 0.31, 0]}>
+        <cylinderGeometry args={[0.1, 0.1, 0.05, 16]} />
+        <meshStandardMaterial color={isDark ? "#0f172a" : "#0d2b76"} />
+      </mesh>
+      
+      {/* Tassel String */}
+      <mesh position={[0.6, 0.1, 0.6]}>
+        <cylinderGeometry args={[0.02, 0.02, 0.7, 8]} />
+        <meshStandardMaterial color={isDark ? "#f59e0b" : "#fbbf24"} />
+      </mesh>
+      
+      {/* Tassel End */}
+      <mesh position={[0.6, -0.3, 0.6]}>
+        <cylinderGeometry args={[0.08, 0.08, 0.15, 8]} />
+        <meshStandardMaterial color={isDark ? "#1e3a8a" : "#1e40af"} />
+      </mesh>
+      
+      {/* Diploma */}
+      <group position={[1.5, 0, 0]} rotation={[0, 0, Math.PI * 0.1]}>
+        {/* Diploma Scroll */}
+        <mesh>
+          <cylinderGeometry args={[0.2, 0.2, 1.2, 16, 1, true]} />
+          <meshStandardMaterial color={isDark ? "#fef3c7" : "#fef9c3"} side={THREE.DoubleSide} />
         </mesh>
         
-        {/* Tassel end */}
-        <mesh position={[0, -0.4, 0]}>
-          <sphereGeometry args={[0.08, 8, 8]} />
-          <meshStandardMaterial color={isDark ? "#f59e0b" : "#fbbf24"} />
+        {/* Diploma End Caps */}
+        <mesh position={[0, 0.6, 0]}>
+          <cylinderGeometry args={[0.2, 0.2, 0.05, 16]} />
+          <meshStandardMaterial color={isDark ? "#fef3c7" : "#fef9c3"} />
+        </mesh>
+        
+        <mesh position={[0, -0.6, 0]}>
+          <cylinderGeometry args={[0.2, 0.2, 0.05, 16]} />
+          <meshStandardMaterial color={isDark ? "#fef3c7" : "#fef9c3"} />
+        </mesh>
+        
+        {/* Diploma Ribbon */}
+        <mesh position={[0, 0, 0]}>
+          <torusGeometry args={[0.25, 0.05, 16, 100, Math.PI * 0.5]} />
+          <meshStandardMaterial color={isDark ? "#dc2626" : "#ef4444"} />
         </mesh>
       </group>
-    </mesh>
+    </group>
   );
 };
 
-const FloatingConvocationCaps = () => {
-  const { theme } = useTheme();
-  const isDark = theme === 'dark';
-  
-  const caps = Array.from({ length: 15 }).map((_, i) => ({
+const FloatingGraduationItems = () => {
+  const items = Array.from({ length: 15 }).map((_, i) => ({
     position: [
       (Math.random() - 0.5) * 20,
       (Math.random() - 0.5) * 20,
       (Math.random() - 0.5) * 20
     ],
-    size: Math.random() * 0.5 + 0.1,
     speed: Math.random() * 0.01 + 0.001
   }));
 
   return (
     <>
-      {caps.map((cap, i) => (
-        <TasseledConvocationCap 
+      {items.map((item, i) => (
+        <GraduationCapWithDiploma 
           key={i} 
-          position={cap.position} 
-          rotationSpeed={cap.speed} 
+          position={item.position} 
+          rotationSpeed={item.speed} 
         />
       ))}
     </>
@@ -88,7 +115,7 @@ const ThreeDBackground: React.FC = () => {
           color={isDark ? "#8b5cf6" : "#ffffff"}
         />
         <pointLight position={[-10, -10, -10]} intensity={isDark ? 0.2 : 0.5} color={isDark ? "#4c1d95" : "#c4b5fd"} />
-        <FloatingConvocationCaps />
+        <FloatingGraduationItems />
         <OrbitControls 
           enableZoom={false} 
           enablePan={false} 
