@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from '@/components/Header';
@@ -118,9 +119,13 @@ const CollegesPage = () => {
   useEffect(() => {
     if (stateFilter === 'all') {
       setAvailableDistricts([]);
+      setDistrictFilter('all');
     } else {
-      const districts = statesData.find(state => state.name === stateFilter)?.districts || [];
+      const selectedState = statesData.find(state => state.name === stateFilter);
+      const districts = selectedState?.districts || [];
       setAvailableDistricts(districts);
+      
+      // Reset district filter if the current selection is not valid for the new state
       if (districtFilter !== 'all' && !districts.includes(districtFilter)) {
         setDistrictFilter('all');
       }
@@ -200,7 +205,7 @@ const CollegesPage = () => {
       setCollegeStatusFilter(value);
     } else if (type === 'state') {
       setStateFilter(value);
-      setDistrictFilter('all'); // Reset district when state changes
+      // District filter will be reset in the useEffect
     } else if (type === 'district') {
       setDistrictFilter(value);
     }
@@ -294,7 +299,7 @@ const CollegesPage = () => {
                   </div>
                   
                   {stateFilter !== 'all' && availableDistricts.length > 0 && (
-                    <div className="space-y-2">
+                    <div className="space-y-2 animate-in fade-in-50 duration-300">
                       <label className="text-sm font-medium">District</label>
                       <Select
                         value={districtFilter}
