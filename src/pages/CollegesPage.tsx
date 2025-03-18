@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from '@/components/Header';
 import { Input } from "@/components/ui/input";
@@ -7,7 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { MapPin, Search, Building } from 'lucide-react';
+import { MapPin, Search, Building, Star } from 'lucide-react';
 import { coursesData, College } from '@/data/coursesData';
 import AnimatedTransition from '@/components/AnimatedTransition';
 import CoursesModal from '@/components/CoursesModal';
@@ -22,6 +22,34 @@ const statesData = [
   { name: "Uttar Pradesh", districts: ["Lucknow", "Kanpur", "Agra", "Varanasi"] }
 ];
 
+// College ratings (mock data)
+const collegeRatings: Record<string, number> = {
+  "Indian Institute of Technology (IIT), Delhi": 4.8,
+  "Massachusetts Institute of Technology (MIT)": 4.9,
+  "Stanford University": 4.9,
+  "All India Institute of Medical Sciences (AIIMS)": 4.7,
+  "Harvard Medical School": 4.8,
+  "Johns Hopkins University School of Medicine": 4.8,
+  "Indian Institute of Management (IIM), Ahmedabad": 4.7,
+  "Harvard Business School": 4.9,
+  "London School of Economics": 4.6,
+  "Indian Institute of Technology (IIT), Bombay": 4.8,
+  "Carnegie Mellon University": 4.7,
+  "University of Oxford": 4.8,
+  "AIIMS, New Delhi": 4.7,
+  "Boston Children's Hospital (Harvard Medical School)": 4.8,
+  "Great Ormond Street Hospital (UCL)": 4.6,
+  "Indian Institute of Management (IIM), Bangalore": 4.7,
+  "Stanford Graduate School of Business": 4.9,
+  "INSEAD": 4.8,
+  "National Institute of Design (NID)": 4.5,
+  "Rhode Island School of Design (RISD)": 4.6,
+  "Royal College of Art": 4.7,
+  "Indian Institute of Science (IISc)": 4.7,
+  "California Institute of Technology (Caltech)": 4.9,
+  "University of Cambridge": 4.8
+};
+
 const CollegesPage = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -32,12 +60,16 @@ const CollegesPage = () => {
   const [districtFilter, setDistrictFilter] = useState('all');
   const [showCoursesModal, setShowCoursesModal] = useState(false);
   const [modalType, setModalType] = useState<'courses' | 'colleges'>('colleges');
+  const [availableDistricts, setAvailableDistricts] = useState<string[]>([]);
 
   const allColleges = coursesData.flatMap(course => course.topColleges);
   
   const uniqueColleges = allColleges.filter((college, index, self) =>
     index === self.findIndex((c) => c.name === college.name)
-  );
+  ).map(college => ({
+    ...college,
+    rating: collegeRatings[college.name] || (4 + Math.random())
+  }));
   
   // Extract all unique fields as college types
   const uniqueCollegeTypes = [...new Set(coursesData.map(course => course.field))].sort();
@@ -45,15 +77,24 @@ const CollegesPage = () => {
   // College status types
   const collegeStatusTypes = ['government', 'private', 'autonomous', 'non-autonomous'];
   
-  // Get available districts based on selected state
-  const availableDistricts = stateFilter === 'all' 
-    ? [] 
-    : statesData.find(state => state.name === stateFilter)?.districts || [];
+  // Update available districts when state changes
+  useEffect(() => {
+    if (stateFilter === 'all') {
+      setAvailableDistricts([]);
+    } else {
+      const districts = statesData.find(state => state.name === stateFilter)?.districts || [];
+      setAvailableDistricts(districts);
+      if (districtFilter !== 'all' && !districts.includes(districtFilter)) {
+        setDistrictFilter('all');
+      }
+    }
+  }, [stateFilter]);
   
   // Filter colleges based on all criteria
   const filteredColleges = uniqueColleges.filter(college => {
     const matchesSearch = searchTerm === '' || 
-      college.name.toLowerCase().includes(searchTerm.toLowerCase());
+      college.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      college.location.toLowerCase().includes(searchTerm.toLowerCase());
     
     // In a real application, colleges would have type and status properties
     // For this demo, we'll simulate by checking if the name includes certain keywords
@@ -80,7 +121,26 @@ const CollegesPage = () => {
     return matchesSearch && matchesType && matchesStatus && matchesState && matchesDistrict;
   });
 
-  const handleViewDetails = (college: College) => {
+  // Generate star rating display (simplified version)
+  const renderStarRating = (rating: number) => {
+    const fullStars = Math.floor(rating);
+    const hasHalfStar = rating % 1 >= 0.5;
+    
+    return (
+      <div className="flex items-center">
+        {[...Array(fullStars)].map((_, i) => (
+          <Star key={`full-${i}`} className="h-3 w-3 fill-primary text-primary" />
+        ))}
+        {hasHalfStar && <Star className="h-3 w-3 fill-primary text-primary opacity-50" />}
+        {[...Array(5 - fullStars - (hasHalfStar ? 1 : 0))].map((_, i) => (
+          <Star key={`empty-${i}`} className="h-3 w-3 text-muted-foreground" />
+        ))}
+        <span className="ml-1 text-xs">{rating.toFixed(1)}</span>
+      </div>
+    );
+  };
+
+  const handleViewDetails = (college: College & { rating?: number }) => {
     toast({
       title: "Viewing college details",
       description: `Loading details for ${college.name}`,
@@ -191,7 +251,7 @@ const CollegesPage = () => {
                     </Select>
                   </div>
                   
-                  {stateFilter !== 'all' && (
+                  {stateFilter !== 'all' && availableDistricts.length > 0 && (
                     <div className="space-y-2">
                       <label className="text-sm font-medium">District</label>
                       <Select
@@ -270,6 +330,9 @@ const CollegesPage = () => {
                             {collegeTypeFilter !== 'all' ? collegeTypeFilter : 
                             coursesData.find(course => course.topColleges.some(c => c.name === college.name))?.field || 'General'}
                           </Badge>
+                          <div className="ml-auto">
+                            {renderStarRating(college.rating || 4.5)}
+                          </div>
                         </div>
                         <CardTitle className="text-lg">{college.name}</CardTitle>
                         <CardDescription className="flex items-center gap-1">
