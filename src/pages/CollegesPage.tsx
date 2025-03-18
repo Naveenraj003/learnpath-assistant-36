@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from '@/components/Header';
@@ -7,7 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { MapPin, Search, Building, Star } from 'lucide-react';
+import { MapPin, Search, Building, Star, Filter } from 'lucide-react';
 import { coursesData, College } from '@/data/coursesData';
 import AnimatedTransition from '@/components/AnimatedTransition';
 import CoursesModal from '@/components/CoursesModal';
@@ -50,6 +49,34 @@ const collegeRatings: Record<string, number> = {
   "University of Cambridge": 4.8
 };
 
+// Mock college-district mappings for filtering purposes
+const collegeDistricts: Record<string, string> = {
+  "Indian Institute of Technology (IIT), Delhi": "New Delhi",
+  "Massachusetts Institute of Technology (MIT)": "Cambridge",
+  "Stanford University": "Stanford",
+  "All India Institute of Medical Sciences (AIIMS)": "New Delhi",
+  "Harvard Medical School": "Boston",
+  "Johns Hopkins University School of Medicine": "Baltimore",
+  "Indian Institute of Management (IIM), Ahmedabad": "Ahmedabad",
+  "Harvard Business School": "Boston",
+  "London School of Economics": "London",
+  "Indian Institute of Technology (IIT), Bombay": "Mumbai",
+  "Carnegie Mellon University": "Pittsburgh",
+  "University of Oxford": "Oxford",
+  "AIIMS, New Delhi": "New Delhi",
+  "Boston Children's Hospital (Harvard Medical School)": "Boston",
+  "Great Ormond Street Hospital (UCL)": "London",
+  "Indian Institute of Management (IIM), Bangalore": "Bangalore",
+  "Stanford Graduate School of Business": "Stanford",
+  "INSEAD": "Fontainebleau",
+  "National Institute of Design (NID)": "Ahmedabad",
+  "Rhode Island School of Design (RISD)": "Providence",
+  "Royal College of Art": "London",
+  "Indian Institute of Science (IISc)": "Bangalore",
+  "California Institute of Technology (Caltech)": "Pasadena",
+  "University of Cambridge": "Cambridge"
+};
+
 const CollegesPage = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -68,8 +95,18 @@ const CollegesPage = () => {
     index === self.findIndex((c) => c.name === college.name)
   ).map(college => ({
     ...college,
-    rating: collegeRatings[college.name] || (4 + Math.random())
+    rating: collegeRatings[college.name] || (4 + Math.random()),
+    district: collegeDistricts[college.name] || getDistrictFromLocation(college.location)
   }));
+  
+  // Helper function to extract district from location string
+  function getDistrictFromLocation(location: string): string {
+    const parts = location.split(',');
+    if (parts.length > 0) {
+      return parts[0].trim();
+    }
+    return '';
+  }
   
   // Extract all unique fields as college types
   const uniqueCollegeTypes = [...new Set(coursesData.map(course => course.field))].sort();
@@ -110,12 +147,14 @@ const CollegesPage = () => {
       (collegeStatusFilter === 'autonomous' && (college.name.includes('University') || college.name.includes('Institute'))) ||
       (collegeStatusFilter === 'non-autonomous' && !college.name.includes('University') && !college.name.includes('Institute'));
     
-    // For demo purposes, we'll match states based on college location containing the state name
+    // For state filtering, check if the college location contains the state name
     const matchesState = stateFilter === 'all' || 
       college.location.includes(stateFilter);
     
-    // For demo purposes, we'll match districts if they appear in the college location
+    // For district filtering, check if the college's district matches the selected district
+    // or if the location contains the district name
     const matchesDistrict = districtFilter === 'all' || 
+      college.district === districtFilter ||
       college.location.includes(districtFilter);
     
     return matchesSearch && matchesType && matchesStatus && matchesState && matchesDistrict;
@@ -179,7 +218,10 @@ const CollegesPage = () => {
             <div className="lg:col-span-1">
               <Card className="glass-panel hover:shadow-lg transition-all duration-300">
                 <CardHeader>
-                  <CardTitle className="text-xl">Filters</CardTitle>
+                  <CardTitle className="text-xl flex items-center gap-2">
+                    <Filter className="h-5 w-5 text-primary" />
+                    Filters
+                  </CardTitle>
                   <CardDescription>Refine your college search</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">

@@ -10,6 +10,7 @@ import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover
 import { BookOpen, BriefcaseIcon, Building, DollarSign, TrendingUp, Award, ArrowLeft, GraduationCap, Info } from 'lucide-react';
 import { coursesData, Course } from '@/data/coursesData';
 import AnimatedTransition from '@/components/AnimatedTransition';
+import JobOpportunities from '@/components/JobOpportunities';
 
 const CourseDetailsPage = () => {
   const { courseId } = useParams();
@@ -200,20 +201,32 @@ const CourseDetailsPage = () => {
                         </CardHeader>
                         <CardContent>
                           <div className="grid grid-cols-1 gap-2">
-                            {course.careerProspects.map((career, index) => (
-                              <Badge 
-                                key={index} 
-                                className="justify-start py-2 bg-secondary/20 hover:bg-secondary/30 cursor-pointer transition-colors"
-                                onClick={() => navigate(`/careers/${encodeURIComponent(career)}`)}
-                              >
-                                <BriefcaseIcon className="h-3.5 w-3.5 mr-2" />
-                                {career}
-                              </Badge>
-                            ))}
+                            {course.careerProspects && course.careerProspects.length > 0 ? (
+                              course.careerProspects.map((career, index) => (
+                                <Badge 
+                                  key={index} 
+                                  className="justify-start py-2 bg-secondary/20 hover:bg-secondary/30 cursor-pointer transition-colors"
+                                  onClick={() => navigate(`/careers/${encodeURIComponent(career)}`)}
+                                >
+                                  <BriefcaseIcon className="h-3.5 w-3.5 mr-2" />
+                                  {career}
+                                </Badge>
+                              ))
+                            ) : (
+                              <p className="text-muted-foreground">No career prospects available for this course.</p>
+                            )}
                           </div>
                         </CardContent>
                       </Card>
                     </div>
+                  </div>
+                  
+                  {/* Show job opportunities in overview tab too */}
+                  <div className="mt-6">
+                    <JobOpportunities 
+                      fieldName={course.field}
+                      careerProspects={course.careerProspects || []}
+                    />
                   </div>
                 </TabsContent>
                 
